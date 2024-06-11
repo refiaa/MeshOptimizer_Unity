@@ -70,7 +70,7 @@ public class DecimaterMain : EditorWindow
         }
 
         GUILayout.Space(10);
-        meshInfoDisplay.DisplayMeshInfo(decimatedMesh);
+        meshInfoDisplay.DisplayMeshInfo(GetCurrentMesh());
     }
 
     private void UpdateSelection(GameObject newSelectedGameObject)
@@ -139,6 +139,22 @@ public class DecimaterMain : EditorWindow
 
         decimateLevel = 1.0f;
         meshPreviewer.UpdatePreviewMesh(selectedGameObject);
+    }
+
+    private Mesh GetCurrentMesh()
+    {
+        if (selectedGameObject != null)
+        {
+            if (selectedGameObject.GetComponent<MeshFilter>() != null)
+            {
+                return selectedGameObject.GetComponent<MeshFilter>().sharedMesh;
+            }
+            else if (selectedGameObject.GetComponent<SkinnedMeshRenderer>() != null)
+            {
+                return selectedGameObject.GetComponent<SkinnedMeshRenderer>().sharedMesh;
+            }
+        }
+        return null;
     }
 
     private void EnableReadWrite(Mesh mesh)
