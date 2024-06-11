@@ -42,4 +42,13 @@ public class MeshPreviewer
             cachedEditor.OnPreviewGUI(previewRect, EditorStyles.whiteLabel);
         }
     }
+
+    public void UpdatePreviewMesh(GameObject gameObject)
+    {
+        if (cachedEditor != null && cachedEditor.target == gameObject)
+        {
+            Object.DestroyImmediate(cachedEditor);
+            cachedEditor = Editor.CreateEditor(gameObject);
+        }
+    }
 }

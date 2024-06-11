@@ -1,13 +1,28 @@
 using UnityEngine;
 using UnityMeshSimplifier;
 
+/*
+using UnityMeshSimplifier from github.com/Whinarn/UnityMeshSimplifier
+*/
+
 public static class MeshDecimaterUtility
 {
     public static void DecimateMesh(Mesh mesh, float decimateLevel)
     {
-        /**
-        TOOD:
-        実際のdecimate logicをここに作成
-        **/
+        MeshSimplifier meshSimplifier = new MeshSimplifier();
+
+        meshSimplifier.Initialize(mesh);
+
+        meshSimplifier.SimplifyMesh(decimateLevel);
+
+        Mesh simplifiedMesh = meshSimplifier.ToMesh();
+
+        mesh.Clear();
+        mesh.vertices = simplifiedMesh.vertices;
+        mesh.triangles = simplifiedMesh.triangles;
+        mesh.normals = simplifiedMesh.normals;
+        mesh.uv = simplifiedMesh.uv;
+        mesh.RecalculateBounds();
+        mesh.RecalculateNormals();
     }
 }

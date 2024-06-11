@@ -90,11 +90,13 @@ public class DecimaterMain : EditorWindow
     {
         MeshDecimaterUtility.DecimateMesh(decimatedMesh, decimateLevel);
         selectedGameObject.GetComponent<MeshFilter>().sharedMesh = decimatedMesh;
+        meshPreviewer.UpdatePreviewMesh(selectedGameObject);
     }
 
     private void RevertDecimation()
     {
         selectedGameObject.GetComponent<MeshFilter>().sharedMesh = originalMesh;
         decimateLevel = 1.0f;
+        meshPreviewer.UpdatePreviewMesh(selectedGameObject);
     }
 }
