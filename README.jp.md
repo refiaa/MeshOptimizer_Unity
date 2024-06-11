@@ -42,3 +42,7 @@ Blenderと同様、`Decimate Level`を調整し、`Apply Decimation`を押すこ
   [UnityMeshSimplifier_github]: https://github.com/Whinarn/UnityMeshSimplifier
   [download_link]: https://github.com/Whinarn/UnityMeshSimplifier/releases/tag/v3.1.0
   [download_link2]: https://github.com/refiaa/MeshDecimater_Unity/releases/latest
+
+```
+Boothのやつと同じやつです。内容に変わりはありません。(shaderの名前がちょっと違うくらい)
+```
