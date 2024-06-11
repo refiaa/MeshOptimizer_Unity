@@ -8,7 +8,7 @@
 
 This plugin enables a functionality similar to Blender's decimate feature within Unity.
 
-It is created using **UnityMeshSimplifier**[[1]][UnityMeshSimplifier_github]
+decimate functions are created by using **UnityMeshSimplifier**[[1]][UnityMeshSimplifier_github]
 
 <div align="left">
 
