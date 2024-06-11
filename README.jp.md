@@ -2,13 +2,6 @@
 
 # Decimater For Unity
 
-<em><h5 align="center">(using Unity 2022.3.22f1)</h5></em>
-
-[![GitHub release](https://img.shields.io/github/release/refiaa/MeshDecimater_Unity.svg?color=Green)](https://github.com/refiaa/MeshDecimater_Unity/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/refiaa/MeshDecimater_Unity/total?color=6451f1)](https://github.com/refiaa/MeshDecimater_Unity/releases/latest)
-[![MeshDecimater_Unity issues](https://img.shields.io/github/issues/refiaa/MeshDecimater_Unity?color=yellow)](https://github.com/refiaa/MeshDecimater_Unity/issues)
-[![MeshDecimater_Unity License](https://img.shields.io/github/license/refiaa/MeshDecimater_Unity?color=orange)](#)
-
 | [English](./README.md) | **日本語** |
 
 Blenderのdecimateみたいな機能をUnity上で使えるようにするPluginです。
@@ -37,6 +30,14 @@ Blenderと同様、`Decimate Level`を調整し、`Apply Decimation`を押すこ
 `Revert`したらオリジナルのファイルに戻ります。
 
 ただ、`Revert`は、別のオブジェクトをクリックすると使えなくなりますのでご注意ください。（オリジナルのMeshは残っているので置き換えれば戻せます）
+
+```
+work confirmed in
+
+・Unity 2022.3.22f1
+
+・Unity 2019.4.31f1
+```
 
 <!-- links -->
   [UnityMeshSimplifier_github]: https://github.com/Whinarn/UnityMeshSimplifier

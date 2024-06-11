@@ -2,13 +2,6 @@
 
 # Decimater For Unity
 
-<em><h5 align="center">(using Unity 2022.3.22f1)</h5></em>
-
-[![GitHub release](https://img.shields.io/github/release/refiaa/MeshDecimater_Unity.svg?color=Green)](https://github.com/refiaa/MeshDecimater_Unity/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/refiaa/MeshDecimater_Unity/total?color=6451f1)](https://github.com/refiaa/MeshDecimater_Unity/releases/latest)
-[![MeshDecimater_Unity issues](https://img.shields.io/github/issues/refiaa/MeshDecimater_Unity?color=yellow)](https://github.com/refiaa/MeshDecimater_Unity/issues)
-[![MeshDecimater_Unity License](https://img.shields.io/github/license/refiaa/MeshDecimater_Unity?color=orange)](#)
-
 | **English** | [日本語](./README.jp.md) |
 
 This plugin enables a functionality similar to Blender's decimate feature within Unity.
@@ -42,7 +35,16 @@ Clicking `Revert` will restore the original file.
 
 Please note that Revert will not work after clicking on a different object (the original mesh will remain, so you can replace it to restore).
 
+```
+work confirmed in
+
+・Unity 2022.3.22f1
+
+・Unity 2019.4.31f1
+```
+
 <!-- links -->
   [UnityMeshSimplifier_github]: https://github.com/Whinarn/UnityMeshSimplifier
   [download_link]: https://github.com/Whinarn/UnityMeshSimplifier/releases/tag/v3.1.0
   [download_link2]: https://github.com/refiaa/MeshDecimater_Unity/releases/latest
+
