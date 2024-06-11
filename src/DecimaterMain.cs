@@ -79,6 +79,7 @@ public class DecimaterMain : EditorWindow
         {
             selectedGameObject = newSelectedGameObject;
             originalMesh = selectedGameObject.GetComponent<MeshFilter>().sharedMesh;
+            EnableReadWrite(originalMesh);
             decimatedMesh = Instantiate(originalMesh);
             Selection.activeObject = originalMesh;
             Debug.Log($"Selected Mesh: {AssetDatabase.GetAssetPath(originalMesh)}");
@@ -88,6 +89,7 @@ public class DecimaterMain : EditorWindow
 
     private void ApplyDecimation()
     {
+        EnableReadWrite(decimatedMesh);
         MeshDecimaterUtility.DecimateMesh(decimatedMesh, decimateLevel);
         selectedGameObject.GetComponent<MeshFilter>().sharedMesh = decimatedMesh;
         meshPreviewer.UpdatePreviewMesh(selectedGameObject);
@@ -98,5 +100,18 @@ public class DecimaterMain : EditorWindow
         selectedGameObject.GetComponent<MeshFilter>().sharedMesh = originalMesh;
         decimateLevel = 1.0f;
         meshPreviewer.UpdatePreviewMesh(selectedGameObject);
+    }
+
+    private void EnableReadWrite(Mesh mesh)
+    {
+        string path = AssetDatabase.GetAssetPath(mesh);
+        if (string.IsNullOrEmpty(path)) return;
+
+        ModelImporter modelImporter = AssetImporter.GetAtPath(path) as ModelImporter;
+        if (modelImporter != null)
+        {
+            modelImporter.isReadable = true;
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+        }
     }
 }
