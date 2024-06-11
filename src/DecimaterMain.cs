@@ -45,7 +45,7 @@ public class DecimaterMain : EditorWindow
 
         if (selectedGameObject == null)
         {
-            EditorGUILayout.HelpBox("No GameObject selected. Please select a GameObject with a MeshFilter component.", MessageType.Warning);
+            EditorGUILayout.HelpBox("No GameObject selected. Please select a GameObject with a MeshFilter or SkinnedMeshRenderer component.", MessageType.Warning);
             return;
         }
 
@@ -75,15 +75,31 @@ public class DecimaterMain : EditorWindow
 
     private void UpdateSelection(GameObject newSelectedGameObject)
     {
-        if (newSelectedGameObject != null && newSelectedGameObject.GetComponent<MeshFilter>() != null)
+        if (newSelectedGameObject != null)
         {
-            selectedGameObject = newSelectedGameObject;
-            originalMesh = selectedGameObject.GetComponent<MeshFilter>().sharedMesh;
-            EnableReadWrite(originalMesh);
-            decimatedMesh = Instantiate(originalMesh);
-            Selection.activeObject = originalMesh;
-            Debug.Log($"Selected Mesh: {AssetDatabase.GetAssetPath(originalMesh)}");
-            Repaint();
+            MeshFilter meshFilter = newSelectedGameObject.GetComponent<MeshFilter>();
+            SkinnedMeshRenderer skinnedMeshRenderer = newSelectedGameObject.GetComponent<SkinnedMeshRenderer>();
+
+            if (meshFilter != null)
+            {
+                selectedGameObject = newSelectedGameObject;
+                originalMesh = meshFilter.sharedMesh;
+                EnableReadWrite(originalMesh);
+                decimatedMesh = Instantiate(originalMesh);
+                Selection.activeObject = originalMesh;
+                Debug.Log($"Selected Mesh: {AssetDatabase.GetAssetPath(originalMesh)}");
+                Repaint();
+            }
+            else if (skinnedMeshRenderer != null)
+            {
+                selectedGameObject = newSelectedGameObject;
+                originalMesh = skinnedMeshRenderer.sharedMesh;
+                EnableReadWrite(originalMesh);
+                decimatedMesh = Instantiate(originalMesh);
+                Selection.activeObject = originalMesh;
+                Debug.Log($"Selected Mesh: {AssetDatabase.GetAssetPath(originalMesh)}");
+                Repaint();
+            }
         }
     }
 
@@ -91,13 +107,36 @@ public class DecimaterMain : EditorWindow
     {
         EnableReadWrite(decimatedMesh);
         MeshDecimaterUtility.DecimateMesh(decimatedMesh, decimateLevel);
-        selectedGameObject.GetComponent<MeshFilter>().sharedMesh = decimatedMesh;
+
+        if (selectedGameObject.GetComponent<MeshFilter>() != null)
+        {
+            selectedGameObject.GetComponent<MeshFilter>().sharedMesh = decimatedMesh;
+        }
+        else if (selectedGameObject.GetComponent<SkinnedMeshRenderer>() != null)
+        {
+            SkinnedMeshRenderer skinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>();
+            skinnedMeshRenderer.sharedMesh = decimatedMesh;
+            skinnedMeshRenderer.sharedMesh.bindposes = originalMesh.bindposes;
+            skinnedMeshRenderer.sharedMesh.boneWeights = originalMesh.boneWeights;
+        }
+
         meshPreviewer.UpdatePreviewMesh(selectedGameObject);
     }
 
     private void RevertDecimation()
     {
-        selectedGameObject.GetComponent<MeshFilter>().sharedMesh = originalMesh;
+        if (selectedGameObject.GetComponent<MeshFilter>() != null)
+        {
+            selectedGameObject.GetComponent<MeshFilter>().sharedMesh = originalMesh;
+        }
+        else if (selectedGameObject.GetComponent<SkinnedMeshRenderer>() != null)
+        {
+            SkinnedMeshRenderer skinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>();
+            skinnedMeshRenderer.sharedMesh = originalMesh;
+            skinnedMeshRenderer.sharedMesh.bindposes = originalMesh.bindposes;
+            skinnedMeshRenderer.sharedMesh.boneWeights = originalMesh.boneWeights;
+        }
+
         decimateLevel = 1.0f;
         meshPreviewer.UpdatePreviewMesh(selectedGameObject);
     }

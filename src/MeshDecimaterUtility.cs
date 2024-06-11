@@ -22,6 +22,8 @@ public static class MeshDecimaterUtility
         mesh.triangles = simplifiedMesh.triangles;
         mesh.normals = simplifiedMesh.normals;
         mesh.uv = simplifiedMesh.uv;
+        mesh.bindposes = simplifiedMesh.bindposes;
+        mesh.boneWeights = simplifiedMesh.boneWeights;
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
     }

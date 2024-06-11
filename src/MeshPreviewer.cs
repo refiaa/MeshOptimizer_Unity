@@ -28,6 +28,8 @@ public class MeshPreviewer
         }
 
         var meshRenderer = gameObject.GetComponent<MeshRenderer>();
+        var skinnedMeshRenderer = gameObject.GetComponent<SkinnedMeshRenderer>();
+
         if (meshRenderer != null)
         {
             var originalMaterials = meshRenderer.sharedMaterials;
@@ -36,6 +38,15 @@ public class MeshPreviewer
             cachedEditor.OnPreviewGUI(previewRect, EditorStyles.whiteLabel);
 
             meshRenderer.sharedMaterials = originalMaterials;
+        }
+        else if (skinnedMeshRenderer != null)
+        {
+            var originalMaterials = skinnedMeshRenderer.sharedMaterials;
+            skinnedMeshRenderer.sharedMaterials = new Material[] { previewMaterial, wireframeMaterial };
+
+            cachedEditor.OnPreviewGUI(previewRect, EditorStyles.whiteLabel);
+
+            skinnedMeshRenderer.sharedMaterials = originalMaterials;
         }
         else
         {
