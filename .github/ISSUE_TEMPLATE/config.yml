@@ -1,0 +1,26 @@
+blank_issues_enabled: false  # Disables the ability to open blank issues
+contact_links:
+  - name: 🤷‍♀️ Questions or need help?
+    url: https://github.com/refiaa/MeshDecimater_Unity/discussions/categories/questions
+    about: If you have questions or need help with MeshDecimater_Unity, check existing questions or post a new one here.
+    
+  - name: 💬 Discussions
+    url: https://github.com/refiaa/MeshDecimater_Unity/discussions
+    about: Join the discussions. Share your experiences, challenges, and workarounds with the MeshDecimater_Unity community.
+    
+  - name: 💡 Suggestions / Ideas
+    url: https://github.com/refiaa/MeshDecimater_Unity/discussions/categories/ideas
+    about: Have ideas for new features or improvements? Check out existing suggestions or share your own.
+
+issue_templates:
+  - name: Bug Report
+    description: Report a bug to help us improve MeshDecimater_Unity.
+    template: bugreport.yml
+    title: "[BUG] "
+    labels: ["bug", "needs triage"]
+    
+  - name: Feature Request
+    description: Suggest an idea or enhancement for MeshDecimater_Unity.
+    template: feature_request.yml
+    title: "[FEATURE] "
+    labels: ["enhancement", "needs review"]
