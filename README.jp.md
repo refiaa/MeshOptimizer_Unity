@@ -15,10 +15,39 @@ Blenderのdecimateみたいな機能をUnity上で使えるようにするPlugin
 ### 導入方法
 ---
 
+**How to Install**
+
 1.  [ここ][download_link]のファイルをダウンロードし、Assetsに展開してください。
   
 2.  次に、[ここ][download_link2]から最新のリリースファイル(Unitypackage)をダウンロードしインポートしたら終わりです。
 
+**File Tree Structure**
+
+導入方法(2)の項目に関しては、treeの構造が以下のようになるようにしてください。
+
+```shell
+Assets
+├─MeshDecimater_Unity
+│  ├─Material
+│  ├─Shader
+│  └─src
+└─UnityMeshSimplifier
+    ├─.circleci
+    │  ├─ProjectSettings
+    │  └─scripts
+    ├─.github
+    │  ├─ISSUE_TEMPLATE
+    │  └─workflows
+    ├─Editor
+    ├─Runtime
+    │  ├─Components
+    │  ├─Exceptions
+    │  ├─Internal
+    │  ├─Math
+    │  └─Utility
+    └─Tests
+        └─Editor
+```
 
 ### 使い方
 ---

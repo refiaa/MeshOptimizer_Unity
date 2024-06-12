@@ -15,10 +15,39 @@ decimate functions are created by using **UnityMeshSimplifier**[[1]][UnityMeshSi
 ### Installation
 ---
 
+**How to Install**
+
 1.  Download the file from [here][download_link] and extract it into your Assets folder.
   
 2.  Next, download the latest release file (Unitypackage) from [here][download_link2] and import it to complete the setup.
 
+**File Tree Structure**
+
+tree have to looks like this
+
+```shell
+Assets
+├─MeshDecimater_Unity
+│  ├─Material
+│  ├─Shader
+│  └─src
+└─UnityMeshSimplifier
+    ├─.circleci
+    │  ├─ProjectSettings
+    │  └─scripts
+    ├─.github
+    │  ├─ISSUE_TEMPLATE
+    │  └─workflows
+    ├─Editor
+    ├─Runtime
+    │  ├─Components
+    │  ├─Exceptions
+    │  ├─Internal
+    │  ├─Math
+    │  └─Utility
+    └─Tests
+        └─Editor
+```
 
 ### How to use
 ---
