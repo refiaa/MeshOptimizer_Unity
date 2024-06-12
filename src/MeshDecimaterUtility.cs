@@ -22,10 +22,11 @@ public static class MeshDecimaterUtility
         decimatedMesh.triangles = simplifiedMesh.triangles;
         decimatedMesh.normals = simplifiedMesh.normals;
         decimatedMesh.uv = simplifiedMesh.uv;
+        decimatedMesh.tangents = simplifiedMesh.tangents;
 
         if (isSkinnedMeshRenderer)
         {
-            if (originalMesh.bindposes != null && originalMesh.boneWeights != null)
+            if (originalMesh.bindposes != null && originalMesh.boneWeights != null && originalMesh.boneWeights.Length == originalMesh.vertexCount)
             {
                 decimatedMesh.bindposes = originalMesh.bindposes;
                 decimatedMesh.boneWeights = CopyBoneWeights(originalMesh, simplifiedMesh);
@@ -40,6 +41,7 @@ public static class MeshDecimaterUtility
 
         decimatedMesh.RecalculateBounds();
         decimatedMesh.RecalculateNormals();
+        decimatedMesh.RecalculateTangents();
     }
 
     private static void CopyBlendShapes(Mesh sourceMesh, Mesh simplifiedMesh, Mesh targetMesh)
