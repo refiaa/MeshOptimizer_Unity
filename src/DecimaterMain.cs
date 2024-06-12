@@ -105,14 +105,16 @@ public class DecimaterMain : EditorWindow
 
     private void ApplyDecimation()
     {
+        bool isSkinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>() != null;
+
         EnableReadWrite(decimatedMesh);
-        MeshDecimaterUtility.DecimateMesh(originalMesh, decimatedMesh, decimateLevel);
+        MeshDecimaterUtility.DecimateMesh(originalMesh, decimatedMesh, decimateLevel, isSkinnedMeshRenderer);
 
         if (selectedGameObject.GetComponent<MeshFilter>() != null)
         {
             selectedGameObject.GetComponent<MeshFilter>().sharedMesh = decimatedMesh;
         }
-        else if (selectedGameObject.GetComponent<SkinnedMeshRenderer>() != null)
+        else if (isSkinnedMeshRenderer)
         {
             SkinnedMeshRenderer skinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>();
             skinnedMeshRenderer.sharedMesh = decimatedMesh;
