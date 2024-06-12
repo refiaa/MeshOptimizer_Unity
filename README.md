@@ -2,6 +2,8 @@
 
 # Decimater For Unity
 
+![ezgif-4-3e959bfecd](https://github.com/refiaa/MeshDecimater_Unity/assets/112306763/bdb7fedf-1df1-4be4-a9e2-54346e11d564)
+
 | **English** | [日本語](./README.jp.md) |
 
 This plugin enables a functionality similar to Blender's decimate feature within Unity.
@@ -20,14 +22,9 @@ decimate functions are created by using **UnityMeshSimplifier**[[1]][UnityMeshSi
 
 ### How to use
 ---
+![image](https://github.com/refiaa/MeshDecimater_Unity/assets/112306763/e6651c4f-357f-457a-a3a3-e87d0a38b75e)
 
 Select an object with a mesh from the Hierarchy or choose it from the ObjectField to use the plugin.
-
-![3](https://github.com/refiaa/MeshDecimater_Unity/assets/112306763/8cfcf68e-7bd2-43a2-b4bd-3fb2317d5f49)
-
-this is how its work (gif)
-
-![image](https://github.com/refiaa/MeshDecimater_Unity/assets/112306763/e6651c4f-357f-457a-a3a3-e87d0a38b75e)
 
 Similar to Blender, adjust the `Decimate Level` and press `Apply Decimation` to execute the decimation.
 
