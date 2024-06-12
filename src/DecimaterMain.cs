@@ -106,7 +106,7 @@ public class DecimaterMain : EditorWindow
     private void ApplyDecimation()
     {
         EnableReadWrite(decimatedMesh);
-        MeshDecimaterUtility.DecimateMesh(decimatedMesh, decimateLevel);
+        MeshDecimaterUtility.DecimateMesh(originalMesh, decimatedMesh, decimateLevel);
 
         if (selectedGameObject.GetComponent<MeshFilter>() != null)
         {
@@ -118,7 +118,6 @@ public class DecimaterMain : EditorWindow
             skinnedMeshRenderer.sharedMesh = decimatedMesh;
             skinnedMeshRenderer.sharedMesh.bindposes = originalMesh.bindposes;
             skinnedMeshRenderer.sharedMesh.boneWeights = originalMesh.boneWeights;
-            PreserveBlendShapes(originalMesh, skinnedMeshRenderer.sharedMesh);
         }
 
         meshPreviewer.UpdatePreviewMesh(selectedGameObject);
@@ -168,27 +167,6 @@ public class DecimaterMain : EditorWindow
         {
             modelImporter.isReadable = true;
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
-        }
-    }
-
-    private void PreserveBlendShapes(Mesh originalMesh, Mesh decimatedMesh)
-    {
-        int blendShapeCount = originalMesh.blendShapeCount;
-        for (int i = 0; i < blendShapeCount; i++)
-        {
-            string shapeName = originalMesh.GetBlendShapeName(i);
-            int frameCount = originalMesh.GetBlendShapeFrameCount(i);
-
-            for (int j = 0; j < frameCount; j++)
-            {
-                float frameWeight = originalMesh.GetBlendShapeFrameWeight(i, j);
-                Vector3[] deltaVertices = new Vector3[originalMesh.vertexCount];
-                Vector3[] deltaNormals = new Vector3[originalMesh.vertexCount];
-                Vector3[] deltaTangents = new Vector3[originalMesh.vertexCount];
-
-                originalMesh.GetBlendShapeFrameVertices(i, j, deltaVertices, deltaNormals, deltaTangents);
-                decimatedMesh.AddBlendShapeFrame(shapeName, frameWeight, deltaVertices, deltaNormals, deltaTangents);
-            }
         }
     }
 }
