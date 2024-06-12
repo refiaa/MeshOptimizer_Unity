@@ -7,7 +7,7 @@ using UnityMeshSimplifier from github.com/Whinarn/UnityMeshSimplifier
 
 public static class MeshDecimaterUtility
 {
-    public static void DecimateMesh(Mesh originalMesh, Mesh decimatedMesh, float decimateLevel)
+    public static void DecimateMesh(Mesh originalMesh, Mesh decimatedMesh, float decimateLevel, bool isSkinnedMeshRenderer)
     {
         MeshSimplifier meshSimplifier = new MeshSimplifier();
 
@@ -22,48 +22,66 @@ public static class MeshDecimaterUtility
         decimatedMesh.triangles = simplifiedMesh.triangles;
         decimatedMesh.normals = simplifiedMesh.normals;
         decimatedMesh.uv = simplifiedMesh.uv;
-        decimatedMesh.bindposes = simplifiedMesh.bindposes;
-        decimatedMesh.boneWeights = simplifiedMesh.boneWeights;
 
-        CopyBlendShapes(originalMesh, simplifiedMesh, decimatedMesh);
+        if (isSkinnedMeshRenderer)
+        {
+            if (originalMesh.bindposes != null && originalMesh.boneWeights != null)
+            {
+                decimatedMesh.bindposes = originalMesh.bindposes;
+                decimatedMesh.boneWeights = CopyBoneWeights(originalMesh, simplifiedMesh);
+            }
+
+            CopyBlendShapes(originalMesh, simplifiedMesh, decimatedMesh);
+        }
+        else
+        {
+            CopyBlendShapes(originalMesh, simplifiedMesh, decimatedMesh);
+        }
 
         decimatedMesh.RecalculateBounds();
         decimatedMesh.RecalculateNormals();
     }
 
-    private static void CopyBlendShapes(Mesh originalMesh, Mesh simplifiedMesh, Mesh targetMesh)
+    private static void CopyBlendShapes(Mesh sourceMesh, Mesh simplifiedMesh, Mesh targetMesh)
     {
-        for (int i = 0; i < originalMesh.blendShapeCount; i++)
+        Vector3[] originalVertices = sourceMesh.vertices;
+        Vector3[] simplifiedVertices = simplifiedMesh.vertices;
+        int[] closestVertexMap = new int[simplifiedVertices.Length];
+
+        for (int i = 0; i < simplifiedVertices.Length; i++)
         {
-            string shapeName = originalMesh.GetBlendShapeName(i);
-            int frameCount = originalMesh.GetBlendShapeFrameCount(i);
+            closestVertexMap[i] = FindClosestVertex(originalVertices, simplifiedVertices[i]);
+        }
+
+        for (int i = 0; i < sourceMesh.blendShapeCount; i++)
+        {
+            string shapeName = sourceMesh.GetBlendShapeName(i);
+            int frameCount = sourceMesh.GetBlendShapeFrameCount(i);
 
             for (int frameIndex = 0; frameIndex < frameCount; frameIndex++)
             {
-                float frameWeight = originalMesh.GetBlendShapeFrameWeight(i, frameIndex);
-                Vector3[] deltaVertices = new Vector3[simplifiedMesh.vertexCount];
-                Vector3[] deltaNormals = new Vector3[simplifiedMesh.vertexCount];
-                Vector3[] deltaTangents = new Vector3[simplifiedMesh.vertexCount];
+                float frameWeight = sourceMesh.GetBlendShapeFrameWeight(i, frameIndex);
+                Vector3[] deltaVertices = new Vector3[simplifiedVertices.Length];
+                Vector3[] deltaNormals = new Vector3[simplifiedVertices.Length];
+                Vector3[] deltaTangents = new Vector3[simplifiedVertices.Length];
 
-                SimplifyBlendShapeFrame(originalMesh, simplifiedMesh, i, frameIndex, deltaVertices, deltaNormals, deltaTangents);
+                SimplifyBlendShapeFrame(sourceMesh, i, frameIndex, closestVertexMap, deltaVertices, deltaNormals, deltaTangents);
                 targetMesh.AddBlendShapeFrame(shapeName, frameWeight, deltaVertices, deltaNormals, deltaTangents);
             }
         }
     }
 
-    private static void SimplifyBlendShapeFrame(Mesh originalMesh, Mesh simplifiedMesh, int shapeIndex, int frameIndex, Vector3[] deltaVertices, Vector3[] deltaNormals, Vector3[] deltaTangents)
+    private static void SimplifyBlendShapeFrame(Mesh originalMesh, int shapeIndex, int frameIndex, int[] closestVertexMap, Vector3[] deltaVertices, Vector3[] deltaNormals, Vector3[] deltaTangents)
     {
-        Vector3[] originalVertices = originalMesh.vertices;
-        Vector3[] simplifiedVertices = simplifiedMesh.vertices;
         Vector3[] originalDeltaVertices = new Vector3[originalMesh.vertexCount];
         Vector3[] originalDeltaNormals = new Vector3[originalMesh.vertexCount];
         Vector3[] originalDeltaTangents = new Vector3[originalMesh.vertexCount];
 
         originalMesh.GetBlendShapeFrameVertices(shapeIndex, frameIndex, originalDeltaVertices, originalDeltaNormals, originalDeltaTangents);
 
-        for (int i = 0; i < simplifiedVertices.Length; i++)
+        for (int i = 0; i < closestVertexMap.Length; i++)
         {
-            int closestVertexIndex = FindClosestVertex(originalVertices, simplifiedVertices[i]);
+            int closestVertexIndex = closestVertexMap[i];
             deltaVertices[i] = originalDeltaVertices[closestVertexIndex];
             deltaNormals[i] = originalDeltaNormals[closestVertexIndex];
             deltaTangents[i] = originalDeltaTangents[closestVertexIndex];
@@ -86,5 +104,26 @@ public static class MeshDecimaterUtility
         }
 
         return closestIndex;
+    }
+
+    private static BoneWeight[] CopyBoneWeights(Mesh originalMesh, Mesh simplifiedMesh)
+    {
+        Vector3[] originalVertices = originalMesh.vertices;
+        Vector3[] simplifiedVertices = simplifiedMesh.vertices;
+        BoneWeight[] originalBoneWeights = originalMesh.boneWeights;
+        BoneWeight[] simplifiedBoneWeights = new BoneWeight[simplifiedVertices.Length];
+        int[] closestVertexMap = new int[simplifiedVertices.Length];
+
+        for (int i = 0; i < simplifiedVertices.Length; i++)
+        {
+            closestVertexMap[i] = FindClosestVertex(originalVertices, simplifiedVertices[i]);
+        }
+
+        for (int i = 0; i < simplifiedVertices.Length; i++)
+        {
+            simplifiedBoneWeights[i] = originalBoneWeights[closestVertexMap[i]];
+        }
+
+        return simplifiedBoneWeights;
     }
 }
