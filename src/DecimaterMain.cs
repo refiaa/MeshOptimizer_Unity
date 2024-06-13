@@ -95,6 +95,7 @@ public class DecimaterMain : EditorWindow
                 originalMesh = meshFilter.sharedMesh;
                 EnableReadWrite(originalMesh);
                 decimatedMesh = Instantiate(originalMesh);
+                meshInfoDisplay.SetOriginalMesh(originalMesh);
                 Selection.activeObject = originalMesh;
                 Debug.Log($"Selected Mesh: {AssetDatabase.GetAssetPath(originalMesh)}");
                 Repaint();
@@ -105,6 +106,7 @@ public class DecimaterMain : EditorWindow
                 originalMesh = skinnedMeshRenderer.sharedMesh;
                 EnableReadWrite(originalMesh);
                 decimatedMesh = Instantiate(originalMesh);
+                meshInfoDisplay.SetOriginalMesh(originalMesh);
                 Selection.activeObject = originalMesh;
                 Debug.Log($"Selected Mesh: {AssetDatabase.GetAssetPath(originalMesh)}");
                 Repaint();
