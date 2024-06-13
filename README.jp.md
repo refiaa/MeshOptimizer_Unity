@@ -2,7 +2,7 @@
 
 # Decimater For Unity
 
-![ezgif-4-3e959bfecd](https://github.com/refiaa/MeshDecimater_Unity/assets/112306763/bdb7fedf-1df1-4be4-a9e2-54346e11d564)
+![img](https://github.com/refiaa/MeshDecimater_Unity/assets/112306763/e4747f15-c537-4d83-a6d1-5e69100c244c)
 
 | [English](./README.md) | **日本語** |
 
@@ -51,7 +51,7 @@ Assets
 
 ### 使い方
 ---
-![image](https://github.com/refiaa/MeshDecimater_Unity/assets/112306763/e6651c4f-357f-457a-a3a3-e87d0a38b75e)
+![src](https://github.com/refiaa/MeshDecimater_Unity/assets/112306763/1830fee5-2ae0-49d0-bac4-929a3e42ab4a)
 
 Meshが入ってるオブジェクトをHierarchyから選択するか、ObjectFieldから選んで使用してください。
 
