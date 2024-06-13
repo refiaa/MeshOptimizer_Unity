@@ -2,6 +2,8 @@
 
 # Decimater For Unity
 
+<em><h5 align="center">(using Unity 2022.3.22f1)</h5></em>
+
 ![img](https://github.com/refiaa/MeshDecimater_Unity/assets/112306763/e4747f15-c537-4d83-a6d1-5e69100c244c)
 
 | **English** | [日本語](./README.jp.md) |
