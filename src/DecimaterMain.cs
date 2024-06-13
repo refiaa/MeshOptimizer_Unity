@@ -12,6 +12,8 @@ public class DecimaterMain : EditorWindow
 
     private Material previewMaterial;
     private Material wireframeMaterial;
+    private Shader previewShader;
+    private Shader wireframeShader;
 
     [MenuItem("Decimater/MeshDecimater")]
     public static void ShowWindow()
@@ -21,11 +23,18 @@ public class DecimaterMain : EditorWindow
 
     private void OnEnable()
     {
+        LoadShaders();
         previewMaterial = CreatePreviewMaterial();
         wireframeMaterial = CreateWireframeMaterial();
 
         meshPreviewer = new MeshPreviewer(previewMaterial, wireframeMaterial);
         meshInfoDisplay = new MeshInfoDisplay();
+    }
+
+    private void LoadShaders()
+    {
+        previewShader = Shader.Find("Standard");
+        wireframeShader = Shader.Find("Refiaa/Wireframe");
     }
 
     private void OnSelectionChange()
@@ -171,10 +180,16 @@ public class DecimaterMain : EditorWindow
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
         }
     }
+
     private Material CreatePreviewMaterial()
     {
-        Shader shader = Shader.Find("Standard");
-        Material material = new Material(shader)
+        if (previewShader == null)
+        {
+            Debug.LogError("Preview shader not found!");
+            return null;
+        }
+
+        Material material = new Material(previewShader)
         {
             name = "Preview Material"
         };
@@ -191,7 +206,12 @@ public class DecimaterMain : EditorWindow
 
     private Material CreateWireframeMaterial()
     {
-        Shader wireframeShader = Shader.Find("Refiaa/Wireframe");
+        if (wireframeShader == null)
+        {
+            Debug.LogError("Wireframe shader not found!");
+            return null;
+        }
+
         return new Material(wireframeShader)
         {
             name = "Wireframe Material"
