@@ -41,10 +41,38 @@ public class MeshInfoDisplay
         int newSubMeshCount = mesh.subMeshCount;
         float newMeshSize = CalculateMeshSize(mesh);
 
-        GUILayout.Label(GetFormattedLabel("Vertices", originalVertexCount, newVertexCount));
-        GUILayout.Label(GetFormattedLabel("Triangles", originalTriangleCount, newTriangleCount));
-        GUILayout.Label(GetFormattedLabel("Submeshes", originalSubMeshCount, newSubMeshCount));
-        GUILayout.Label(GetFormattedLabel("Mesh Size (KB)", originalMeshSize, newMeshSize));
+        DisplayDetail("Vertices", originalVertexCount, newVertexCount);
+        DisplayDetail("Triangles", originalTriangleCount, newTriangleCount);
+        DisplayDetail("Submeshes", originalSubMeshCount, newSubMeshCount);
+        DisplayDetail("Mesh Size (KB)", originalMeshSize, newMeshSize);
+    }
+
+    private void DisplayDetail(string label, int originalValue, int newValue)
+    {
+        GUILayout.BeginHorizontal();
+        GUILayout.Label($"{label}: {newValue}", GUILayout.Width(150));
+
+        if (originalMesh != null && originalValue != newValue)
+        {
+            float reduction = CalculateReduction(originalValue, newValue);
+            GUILayout.Label($"(-{originalValue - newValue}, -{reduction:F2}%)", GetReductionStyle());
+        }
+
+        GUILayout.EndHorizontal();
+    }
+
+    private void DisplayDetail(string label, float originalValue, float newValue)
+    {
+        GUILayout.BeginHorizontal();
+        GUILayout.Label($"{label}: {newValue:F2} KB", GUILayout.Width(150));
+
+        if (originalMesh != null && !Mathf.Approximately(originalValue, newValue))
+        {
+            float reduction = CalculateReduction(originalValue, newValue);
+            GUILayout.Label($"(-{originalValue - newValue:F2} KB, -{reduction:F2}%)", GetReductionStyle());
+        }
+
+        GUILayout.EndHorizontal();
     }
 
     private GUIStyle GetReductionStyle()
@@ -52,26 +80,6 @@ public class MeshInfoDisplay
         GUIStyle style = new GUIStyle(GUI.skin.label);
         style.normal.textColor = Color.green;
         return style;
-    }
-
-    private string GetFormattedLabel(string label, int originalValue, int newValue)
-    {
-        if (originalMesh == null || originalValue == newValue)
-        {
-            return $"{label}: {newValue}";
-        }
-        float reduction = CalculateReduction(originalValue, newValue);
-        return $"{label}: {newValue} (-{originalValue - newValue}, -{reduction:F2}%)";
-    }
-
-    private string GetFormattedLabel(string label, float originalValue, float newValue)
-    {
-        if (originalMesh == null || Mathf.Approximately(originalValue, newValue))
-        {
-            return $"{label}: {newValue:F2} KB";
-        }
-        float reduction = CalculateReduction(originalValue, newValue);
-        return $"{label}: {newValue:F2} KB (-{originalValue - newValue:F2} KB, -{reduction:F2}%)";
     }
 
     private float CalculateReduction(int original, int newValue)
