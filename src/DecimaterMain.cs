@@ -21,8 +21,8 @@ public class DecimaterMain : EditorWindow
 
     private void OnEnable()
     {
-        previewMaterial = AssetDatabase.LoadAssetAtPath<Material>("Assets/MeshDecimater_Unity/Material/preview.mat");
-        wireframeMaterial = new Material(Shader.Find("Refiaa/Wireframe"));
+        previewMaterial = CreatePreviewMaterial();
+        wireframeMaterial = CreateWireframeMaterial();
 
         meshPreviewer = new MeshPreviewer(previewMaterial, wireframeMaterial);
         meshInfoDisplay = new MeshInfoDisplay();
@@ -170,5 +170,31 @@ public class DecimaterMain : EditorWindow
             modelImporter.isReadable = true;
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
         }
+    }
+    private Material CreatePreviewMaterial()
+    {
+        Shader shader = Shader.Find("Standard");
+        Material material = new Material(shader)
+        {
+            name = "Preview Material"
+        };
+
+        material.SetFloat("_Glossiness", 0.0f);
+        material.SetFloat("_GlossyReflections", 0.0f);
+        material.SetFloat("_Metallic", 0.0f);
+        material.SetFloat("_SpecularHighlights", 0.0f);
+        material.SetColor("_Color", Color.white);
+        material.SetColor("_SpecColor", Color.white);
+
+        return material;
+    }
+
+    private Material CreateWireframeMaterial()
+    {
+        Shader wireframeShader = Shader.Find("Refiaa/Wireframe");
+        return new Material(wireframeShader)
+        {
+            name = "Wireframe Material"
+        };
     }
 }
