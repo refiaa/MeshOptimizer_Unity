@@ -14,6 +14,24 @@ decimate functions are created by using **UnityMeshSimplifier**[[1]][UnityMeshSi
 
 <div align="left">
 
+## Compatibility Issue with VRCSDK3
+
+Currently, there is a significant compatibility issue between this Decimater tool and VRCSDK3-AVATAR. The following symptoms have been observed:
+
+1. **Abnormal Behavior During Upload**:
+   - When attempting to upload an avatar with Decimater imported into the project, VRCSDK exhibits unexpected behavior.
+   - Specifically, instead of referencing the prefab in the Hierarchy, VRCSDK generates a new Prefab in the Assets folder named after the Blueprint ID, and attempts to use this for the upload.
+
+2. **Error Occurrence**:
+   - As a result of the above behavior, a `FileNotFoundException` occurs, causing the upload to fail.
+
+### Problem Details
+
+- This issue occurs simply by importing the Decimater tool into the project.
+- The problem is reproducible even without executing any Decimating operations.
+- While the cause is believed to be related to interactions with VRCSDK, addressing the issue is challenging due to inability to access the internal implementations of VRCSDK's `VRCAvatarBuilder` class and the `VRC.SDK3.Builder.VRCAvatarBuilder.ExportCurrentAvatarResource` method.
+
+
 ### Installation
 ---
 
