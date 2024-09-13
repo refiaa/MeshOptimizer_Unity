@@ -14,24 +14,6 @@ decimate functions are created by using **UnityMeshSimplifier**[[1]][UnityMeshSi
 
 <div align="left">
 
-## Compatibility Issue with VRCSDK3
-
-Currently, there is a significant compatibility issue between this Decimater tool and VRCSDK3-AVATAR. The following symptoms have been observed:
-
-1. **Abnormal Behavior During Upload**:
-   - When attempting to upload an avatar with Decimater imported into the project, VRCSDK exhibits unexpected behavior.
-   - Specifically, instead of referencing the prefab in the Hierarchy, VRCSDK generates a new Prefab in the Assets folder named after the Blueprint ID, and attempts to use this for the upload.
-
-2. **Error Occurrence**:
-   - As a result of the above behavior, a `FileNotFoundException` occurs, causing the upload to fail.
-
-### Problem Details
-
-- This issue occurs simply by importing the Decimater tool into the project.
-- The problem is reproducible even without executing any Decimating operations.
-- While the cause is believed to be related to interactions with VRCSDK, addressing the issue is challenging due to inability to access the internal implementations of VRCSDK's `VRCAvatarBuilder` class and the `VRC.SDK3.Builder.VRCAvatarBuilder.ExportCurrentAvatarResource` method.
-
-
 ### Installation
 ---
 
@@ -46,27 +28,37 @@ Currently, there is a significant compatibility issue between this Decimater too
 tree have to looks like this
 
 ```shell
-Assets
-├─MeshDecimater_Unity
-│  ├─Material
-│  ├─Shader
-│  └─src
-└─UnityMeshSimplifier
-    ├─.circleci
-    │  ├─ProjectSettings
-    │  └─scripts
-    ├─.github
-    │  ├─ISSUE_TEMPLATE
-    │  └─workflows
-    ├─Editor
-    ├─Runtime
-    │  ├─Components
-    │  ├─Exceptions
-    │  ├─Internal
-    │  ├─Math
-    │  └─Utility
-    └─Tests
-        └─Editor
+│  .gitignore
+│  LICENSE
+│  README.jp.md
+│  README.md
+│  Shader.meta
+│  Src.meta
+│
+├─.github
+│  └─ISSUE_TEMPLATE
+│          bugreport.yml
+│          config.yml
+│
+├─Editor
+│      DecimaterMain.cs
+│      DecimaterMain.cs.meta
+│      MeshInfoDisplay.cs
+│      MeshInfoDisplay.cs.meta
+│      MeshPreviewer.cs
+│      MeshPreviewer.cs.meta
+│      WireframeDrawer.cs
+│      WireframeDrawer.cs.meta
+│
+├─Runtime
+│      MeshDecimaterUtility.cs
+│      MeshDecimaterUtility.cs.meta
+│      MeshUtils.cs
+│      MeshUtils.cs.meta
+│
+└─Shader
+        Wireframe.shader
+        Wireframe.shader.meta
 ```
 
 ### How to use

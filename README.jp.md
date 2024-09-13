@@ -14,24 +14,6 @@ Blenderのdecimateみたいな機能をUnity上で使えるようにするPlugin
 
 <div align="left">
 
-## VRCSDK3との互換性問題
-
-現在、このDecimaterツールとVRCSDK3-AVATARとの間に重大な互換性の問題が発生しています。以下の症状が確認されています：
-
-1. **アップロード時の異常動作**：
-   - Decimaterをインポートした状態でアバターをアップロードすると、VRCSDKが予期せぬ動作をします。
-   - 具体的には、Hierarchy上のプレハブではなく、AssetsフォルダにBlueprint IDを名前とする新たなPrefabが生成され、それがアップロード対象として参照されてしまいます。
-
-2. **エラーの発生**：
-   - 上記の動作により、`FileNotFoundException`が発生し、アップロードが失敗します。
-
-### 問題の詳細
-
-- この問題はDecimaterツールをプロジェクトにインポートしただけで発生します。
-- Decimating操作を実行しなくても問題が再現されます。
-- 問題の原因はVRCSDKとの相互作用にあると考えられますが、VRCSDKの`VRCAvatarBuilder`クラスと`VRC.SDK3.Builder.VRCAvatarBuilder.ExportCurrentAvatarResource`メソッドの内部実装の把握ができないため、対応が困難な状況です。
-
-
 ### 導入方法
 ---
 
@@ -46,27 +28,38 @@ Blenderのdecimateみたいな機能をUnity上で使えるようにするPlugin
 導入方法(2)の項目に関しては、treeの構造が以下のようになるようにしてください。
 
 ```shell
-Assets
-├─MeshDecimater_Unity
-│  ├─Material
-│  ├─Shader
-│  └─src
-└─UnityMeshSimplifier
-    ├─.circleci
-    │  ├─ProjectSettings
-    │  └─scripts
-    ├─.github
-    │  ├─ISSUE_TEMPLATE
-    │  └─workflows
-    ├─Editor
-    ├─Runtime
-    │  ├─Components
-    │  ├─Exceptions
-    │  ├─Internal
-    │  ├─Math
-    │  └─Utility
-    └─Tests
-        └─Editor
+MeshDecimater_Unity
+│  .gitignore
+│  LICENSE
+│  README.jp.md
+│  README.md
+│  Shader.meta
+│  Src.meta
+│
+├─.github
+│  └─ISSUE_TEMPLATE
+│          bugreport.yml
+│          config.yml
+│
+├─Editor
+│      DecimaterMain.cs
+│      DecimaterMain.cs.meta
+│      MeshInfoDisplay.cs
+│      MeshInfoDisplay.cs.meta
+│      MeshPreviewer.cs
+│      MeshPreviewer.cs.meta
+│      WireframeDrawer.cs
+│      WireframeDrawer.cs.meta
+│
+├─Runtime
+│      MeshDecimaterUtility.cs
+│      MeshDecimaterUtility.cs.meta
+│      MeshUtils.cs
+│      MeshUtils.cs.meta
+│
+└─Shader
+        Wireframe.shader
+        Wireframe.shader.meta
 ```
 
 ### 使い方
