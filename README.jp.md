@@ -33,8 +33,6 @@ MeshDecimater_Unity
 │  LICENSE
 │  README.jp.md
 │  README.md
-│  Shader.meta
-│  Src.meta
 │
 ├─.github
 │  └─ISSUE_TEMPLATE

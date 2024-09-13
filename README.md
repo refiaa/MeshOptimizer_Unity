@@ -28,12 +28,11 @@ decimate functions are created by using **UnityMeshSimplifier**[[1]][UnityMeshSi
 tree have to looks like this
 
 ```shell
+MeshDecimater_Unity
 │  .gitignore
 │  LICENSE
 │  README.jp.md
 │  README.md
-│  Shader.meta
-│  Src.meta
 │
 ├─.github
 │  └─ISSUE_TEMPLATE
