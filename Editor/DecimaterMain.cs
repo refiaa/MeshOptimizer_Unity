@@ -34,7 +34,7 @@ public class DecimaterMain : EditorWindow
     private void LoadShaders()
     {
         previewShader = Shader.Find("Standard");
-        wireframeShader = Shader.Find("Refiaa/Wireframe");
+        wireframeShader = Shader.Find("Wireframe/Wireframe");
     }
 
     private void OnSelectionChange()
