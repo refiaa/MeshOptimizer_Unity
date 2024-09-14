@@ -11,9 +11,7 @@ public class DecimaterMain : EditorWindow
     private float decimateLevel = 1.0f;
 
     private Material previewMaterial;
-    private Material wireframeMaterial;
     private Shader previewShader;
-    private Shader wireframeShader;
 
     [MenuItem("Decimater/MeshDecimater")]
     public static void ShowWindow()
@@ -25,16 +23,14 @@ public class DecimaterMain : EditorWindow
     {
         LoadShaders();
         previewMaterial = CreatePreviewMaterial();
-        wireframeMaterial = CreateWireframeMaterial();
 
-        meshPreviewer = new MeshPreviewer(previewMaterial, wireframeMaterial);
+        meshPreviewer = new MeshPreviewer(previewMaterial);
         meshInfoDisplay = new MeshInfoDisplay();
     }
 
     private void LoadShaders()
     {
-        previewShader = Shader.Find("Standard");
-        wireframeShader = Shader.Find("Refiaa/Wireframe");
+        previewShader = Shader.Find("Refiaa/Wireframe");
     }
 
     private void OnSelectionChange()
@@ -197,26 +193,14 @@ public class DecimaterMain : EditorWindow
         };
 
         material.SetFloat("_Glossiness", 0.0f);
-        material.SetFloat("_GlossyReflections", 0.0f);
         material.SetFloat("_Metallic", 0.0f);
-        material.SetFloat("_SpecularHighlights", 0.0f);
         material.SetColor("_Color", Color.white);
-        material.SetColor("_SpecColor", Color.white);
+        material.SetColor("_EmissionColor", Color.white);
+
+        material.EnableKeyword("_EMISSION");
+
+        material.SetColor("_WireColor", Color.black);
 
         return material;
-    }
-
-    private Material CreateWireframeMaterial()
-    {
-        if (wireframeShader == null)
-        {
-            Debug.LogError("Wireframe shader not found!");
-            return null;
-        }
-
-        return new Material(wireframeShader)
-        {
-            name = "Wireframe Material"
-        };
     }
 }
