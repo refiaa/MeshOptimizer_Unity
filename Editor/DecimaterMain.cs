@@ -10,6 +10,8 @@ public class DecimaterMain : EditorWindow
     private MeshInfoDisplay meshInfoDisplay;
     private float decimateLevel = 1.0f;
 
+    private Material[] originalMaterials;
+    private int[] originalSubmeshCount;
     private Material previewMaterial;
     private Shader previewShader;
 
@@ -92,6 +94,15 @@ public class DecimaterMain : EditorWindow
                 EnableReadWrite(originalMesh);
                 decimatedMesh = Instantiate(originalMesh);
                 meshInfoDisplay.SetOriginalMesh(originalMesh);
+                
+                Renderer renderer = newSelectedGameObject.GetComponent<Renderer>();
+                originalMaterials = renderer.sharedMaterials;
+                originalSubmeshCount = new int[originalMesh.subMeshCount];
+                for (int i = 0; i < originalMesh.subMeshCount; i++)
+                {
+                    originalSubmeshCount[i] = originalMesh.GetTriangles(i).Length / 3;
+                }
+
                 Selection.activeObject = originalMesh;
                 Debug.Log($"Selected Mesh: {AssetDatabase.GetAssetPath(originalMesh)}");
                 Repaint();
@@ -103,6 +114,14 @@ public class DecimaterMain : EditorWindow
                 EnableReadWrite(originalMesh);
                 decimatedMesh = Instantiate(originalMesh);
                 meshInfoDisplay.SetOriginalMesh(originalMesh);
+                
+                originalMaterials = skinnedMeshRenderer.sharedMaterials;
+                originalSubmeshCount = new int[originalMesh.subMeshCount];
+                for (int i = 0; i < originalMesh.subMeshCount; i++)
+                {
+                    originalSubmeshCount[i] = originalMesh.GetTriangles(i).Length / 3;
+                }
+
                 Selection.activeObject = originalMesh;
                 Debug.Log($"Selected Mesh: {AssetDatabase.GetAssetPath(originalMesh)}");
                 Repaint();
@@ -115,18 +134,20 @@ public class DecimaterMain : EditorWindow
         bool isSkinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>() != null;
 
         EnableReadWrite(decimatedMesh);
-        MeshDecimaterUtility.DecimateMesh(originalMesh, decimatedMesh, decimateLevel, isSkinnedMeshRenderer);
+        MeshDecimaterUtility.DecimateMesh(originalMesh, decimatedMesh, decimateLevel, isSkinnedMeshRenderer, originalSubmeshCount);
 
         if (selectedGameObject.GetComponent<MeshFilter>() != null)
         {
-            selectedGameObject.GetComponent<MeshFilter>().sharedMesh = decimatedMesh;
+            MeshFilter meshFilter = selectedGameObject.GetComponent<MeshFilter>();
+            meshFilter.sharedMesh = decimatedMesh;
+            MeshRenderer meshRenderer = selectedGameObject.GetComponent<MeshRenderer>();
+            meshRenderer.sharedMaterials = originalMaterials;
         }
         else if (isSkinnedMeshRenderer)
         {
             SkinnedMeshRenderer skinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>();
             skinnedMeshRenderer.sharedMesh = decimatedMesh;
-            skinnedMeshRenderer.sharedMesh.bindposes = originalMesh.bindposes;
-            skinnedMeshRenderer.sharedMesh.boneWeights = originalMesh.boneWeights;
+            skinnedMeshRenderer.sharedMaterials = originalMaterials;
         }
 
         meshPreviewer.UpdatePreviewMesh(selectedGameObject);
@@ -136,14 +157,16 @@ public class DecimaterMain : EditorWindow
     {
         if (selectedGameObject.GetComponent<MeshFilter>() != null)
         {
-            selectedGameObject.GetComponent<MeshFilter>().sharedMesh = originalMesh;
+            MeshFilter meshFilter = selectedGameObject.GetComponent<MeshFilter>();
+            meshFilter.sharedMesh = originalMesh;
+            MeshRenderer meshRenderer = selectedGameObject.GetComponent<MeshRenderer>();
+            meshRenderer.sharedMaterials = originalMaterials;
         }
         else if (selectedGameObject.GetComponent<SkinnedMeshRenderer>() != null)
         {
             SkinnedMeshRenderer skinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>();
             skinnedMeshRenderer.sharedMesh = originalMesh;
-            skinnedMeshRenderer.sharedMesh.bindposes = originalMesh.bindposes;
-            skinnedMeshRenderer.sharedMesh.boneWeights = originalMesh.boneWeights;
+            skinnedMeshRenderer.sharedMaterials = originalMaterials;
         }
 
         decimateLevel = 1.0f;
