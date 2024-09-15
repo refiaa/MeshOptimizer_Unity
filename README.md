@@ -4,7 +4,7 @@
 
 <em><h5 align="center">(using Unity 2022.3.22f1)</h5></em>
 
-![img](https://github.com/refiaa/MeshDecimater_Unity/assets/112306763/e4747f15-c537-4d83-a6d1-5e69100c244c)
+![git](https://github.com/user-attachments/assets/4ce84a66-0117-4b19-8761-925cd3c5088f)
 
 | **English** | [日本語](./README.jp.md) |
 
@@ -62,7 +62,8 @@ MeshDecimater_Unity
 
 ### How to use
 ---
-![src](https://github.com/refiaa/MeshDecimater_Unity/assets/112306763/1830fee5-2ae0-49d0-bac4-929a3e42ab4a)
+![13](https://github.com/user-attachments/assets/d4c8bba5-00c2-4a75-9b59-d4514d09990d)
+
 
 Select an object with a mesh from the Hierarchy or choose it from the ObjectField to use the plugin.
 
