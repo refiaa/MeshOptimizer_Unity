@@ -4,13 +4,11 @@ using UnityEditor;
 public class MeshPreviewer
 {
     private Material previewMaterial;
-    private Material wireframeMaterial;
     private Editor cachedEditor;
 
-    public MeshPreviewer(Material previewMaterial, Material wireframeMaterial)
+    public MeshPreviewer(Material previewMaterial)
     {
         this.previewMaterial = previewMaterial;
-        this.wireframeMaterial = wireframeMaterial;
     }
 
     public void PreviewMesh(GameObject gameObject, Rect previewRect)
@@ -33,7 +31,16 @@ public class MeshPreviewer
         if (meshRenderer != null)
         {
             var originalMaterials = meshRenderer.sharedMaterials;
-            meshRenderer.sharedMaterials = new Material[] { previewMaterial, wireframeMaterial };
+            int subMeshCount = originalMaterials.Length;
+
+            Material[] tempMaterials = new Material[subMeshCount];
+
+            for (int i = 0; i < subMeshCount; i++)
+            {
+                tempMaterials[i] = previewMaterial;
+            }
+
+            meshRenderer.sharedMaterials = tempMaterials;
 
             cachedEditor.OnPreviewGUI(previewRect, EditorStyles.whiteLabel);
 
@@ -42,7 +49,16 @@ public class MeshPreviewer
         else if (skinnedMeshRenderer != null)
         {
             var originalMaterials = skinnedMeshRenderer.sharedMaterials;
-            skinnedMeshRenderer.sharedMaterials = new Material[] { previewMaterial, wireframeMaterial };
+            int subMeshCount = originalMaterials.Length;
+
+            Material[] tempMaterials = new Material[subMeshCount];
+
+            for (int i = 0; i < subMeshCount; i++)
+            {
+                tempMaterials[i] = previewMaterial;
+            }
+
+            skinnedMeshRenderer.sharedMaterials = tempMaterials;
 
             cachedEditor.OnPreviewGUI(previewRect, EditorStyles.whiteLabel);
 

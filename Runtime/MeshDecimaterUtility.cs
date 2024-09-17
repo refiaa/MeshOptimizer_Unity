@@ -7,11 +7,13 @@ using UnityMeshSimplifier from github.com/Whinarn/UnityMeshSimplifier
 
 public static class MeshDecimaterUtility
 {
-    public static void DecimateMesh(Mesh originalMesh, Mesh decimatedMesh, float decimateLevel, bool isSkinnedMeshRenderer)
+    public static void DecimateMesh(Mesh originalMesh, Mesh decimatedMesh, float decimateLevel, bool isSkinnedMeshRenderer, int[] originalSubmeshCount)
     {
         MeshSimplifier meshSimplifier = new MeshSimplifier();
-
         meshSimplifier.Initialize(originalMesh);
+
+        meshSimplifier.PreserveBorderEdges = true;
+        meshSimplifier.PreserveUVSeamEdges = true;
 
         meshSimplifier.SimplifyMesh(decimateLevel);
 
@@ -19,10 +21,21 @@ public static class MeshDecimaterUtility
 
         decimatedMesh.Clear();
         decimatedMesh.vertices = simplifiedMesh.vertices;
-        decimatedMesh.triangles = simplifiedMesh.triangles;
         decimatedMesh.normals = simplifiedMesh.normals;
         decimatedMesh.uv = simplifiedMesh.uv;
         decimatedMesh.tangents = simplifiedMesh.tangents;
+
+        decimatedMesh.subMeshCount = originalMesh.subMeshCount;
+        for (int i = 0; i < originalMesh.subMeshCount; i++)
+        {
+            int[] triangles = simplifiedMesh.GetTriangles(i);
+            int targetTriangleCount = Mathf.CeilToInt(originalSubmeshCount[i] * decimateLevel);
+            if (triangles.Length > targetTriangleCount * 3)
+            {
+                System.Array.Resize(ref triangles, targetTriangleCount * 3);
+            }
+            decimatedMesh.SetTriangles(triangles, i);
+        }
 
         if (isSkinnedMeshRenderer)
         {
@@ -114,16 +127,11 @@ public static class MeshDecimaterUtility
         Vector3[] simplifiedVertices = simplifiedMesh.vertices;
         BoneWeight[] originalBoneWeights = originalMesh.boneWeights;
         BoneWeight[] simplifiedBoneWeights = new BoneWeight[simplifiedVertices.Length];
-        int[] closestVertexMap = new int[simplifiedVertices.Length];
 
         for (int i = 0; i < simplifiedVertices.Length; i++)
         {
-            closestVertexMap[i] = FindClosestVertex(originalVertices, simplifiedVertices[i]);
-        }
-
-        for (int i = 0; i < simplifiedVertices.Length; i++)
-        {
-            simplifiedBoneWeights[i] = originalBoneWeights[closestVertexMap[i]];
+            int closestVertexIndex = FindClosestVertex(originalVertices, simplifiedVertices[i]);
+            simplifiedBoneWeights[i] = originalBoneWeights[closestVertexIndex];
         }
 
         return simplifiedBoneWeights;
