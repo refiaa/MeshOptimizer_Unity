@@ -117,7 +117,7 @@ v0.0.8：
 > submeshにpreviewのマテリアルが適用されない問題を修正しました。
 
 ・decimateしたオブジェクトがVRCにアップロードした時に消える問題を修正しました
-> 実際にdecimateを行ったobjectが保存されるようになりました。
+> decimateを行ったobjectが保存されるようになりました。
 
 ```
 work confirmed in
