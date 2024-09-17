@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEditor;
+using System.IO;
+using System.Text.RegularExpressions;
 
 public class DecimaterMain : EditorWindow
 {
@@ -9,11 +11,14 @@ public class DecimaterMain : EditorWindow
     private MeshPreviewer meshPreviewer;
     private MeshInfoDisplay meshInfoDisplay;
     private float decimateLevel = 1.0f;
+    private const float DEFAULT_DECIMATE_LEVEL = 1.0f;
 
     private Material[] originalMaterials;
     private int[] originalSubmeshCount;
     private Material previewMaterial;
     private Shader previewShader;
+    private string saveFolder = "Assets/";
+    private const string MESH_SUFFIX = "_decimated";
 
     [MenuItem("Decimater/MeshDecimater")]
     public static void ShowWindow()
@@ -63,7 +68,12 @@ public class DecimaterMain : EditorWindow
 
         GUILayout.Space(10);
         GUILayout.Label("Decimate Level", EditorStyles.boldLabel);
+        EditorGUI.BeginChangeCheck();
         decimateLevel = EditorGUILayout.Slider("Decimate Level", decimateLevel, 0.1f, 1.0f);
+        if (EditorGUI.EndChangeCheck())
+        {
+            // TODO:decimateLevelが変更された時の値の保存ロジックを追加したい。
+        }
 
         GUILayout.Space(10);
         if (GUILayout.Button("Apply Decimation"))
@@ -82,6 +92,11 @@ public class DecimaterMain : EditorWindow
 
     private void UpdateSelection(GameObject newSelectedGameObject)
     {
+        if (newSelectedGameObject != selectedGameObject)
+        {
+            decimateLevel = DEFAULT_DECIMATE_LEVEL;
+        }
+
         if (newSelectedGameObject != null)
         {
             MeshFilter meshFilter = newSelectedGameObject.GetComponent<MeshFilter>();
@@ -136,6 +151,8 @@ public class DecimaterMain : EditorWindow
         EnableReadWrite(decimatedMesh);
         MeshDecimaterUtility.DecimateMesh(originalMesh, decimatedMesh, decimateLevel, isSkinnedMeshRenderer, originalSubmeshCount);
 
+        SaveDecimatedMesh();
+
         if (selectedGameObject.GetComponent<MeshFilter>() != null)
         {
             MeshFilter meshFilter = selectedGameObject.GetComponent<MeshFilter>();
@@ -152,6 +169,58 @@ public class DecimaterMain : EditorWindow
 
         meshPreviewer.UpdatePreviewMesh(selectedGameObject);
     }
+
+    private void SaveDecimatedMesh()
+    {
+        string actualMeshName = GetActualMeshName();
+        
+        string originalPath = AssetDatabase.GetAssetPath(originalMesh);
+        string directory = Path.GetDirectoryName(originalPath);
+        string newFileName = $"{actualMeshName}{MESH_SUFFIX}.asset";
+        string newPath = Path.Combine(directory, newFileName);
+
+        Mesh existingMesh = AssetDatabase.LoadAssetAtPath<Mesh>(newPath);
+        if (existingMesh != null)
+        {
+            EditorUtility.CopySerialized(decimatedMesh, existingMesh);
+            AssetDatabase.SaveAssets();
+            Debug.Log($"Decimated mesh updated: {newPath}");
+        }
+        else
+        {
+            AssetDatabase.CreateAsset(decimatedMesh, newPath);
+            AssetDatabase.SaveAssets();
+            Debug.Log($"Decimated mesh saved: {newPath}");
+        }
+
+        decimatedMesh = AssetDatabase.LoadAssetAtPath<Mesh>(newPath);
+    }
+
+    private string GetActualMeshName()
+    {
+        if (selectedGameObject == null) return "Unknown";
+
+        MeshFilter meshFilter = selectedGameObject.GetComponent<MeshFilter>();
+        if (meshFilter != null && meshFilter.sharedMesh != null)
+        {
+            return meshFilter.sharedMesh.name;
+        }
+
+        SkinnedMeshRenderer skinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>();
+        if (skinnedMeshRenderer != null && skinnedMeshRenderer.sharedMesh != null)
+        {
+            return skinnedMeshRenderer.sharedMesh.name;
+        }
+
+        return "Unknown";
+    }
+
+    // public void SelectSaveFolder()
+    // {
+    //     string selectedPath = EditorUtility.OpenFolderPanel("Select saved folder", saveFolder, "");
+    //     var match = Regex.Match(selectedPath, @"Assets/.*");
+    //     saveFolder = match.Success ? match.Value : "Assets/";
+    // }
 
     private void RevertDecimation()
     {
