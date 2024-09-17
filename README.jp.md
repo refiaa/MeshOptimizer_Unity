@@ -72,6 +72,46 @@ Blenderと同様、`Decimate Level`を調整し、`Apply Decimation`を押すこ
 
 ただ、`Revert`は、別のオブジェクトをクリックすると使えなくなりますのでご注意ください。（オリジナルのMeshは残っているので置き換えれば戻せます）
 
+### 更新履歴
+---
+
+v0.0.1：
+>・リリースしました。
+
+v0.0.2：
+>・Apply後にComponentsが消える問題を修正しました。
+
+v0.0.3：
+>・BlendsShapeによる問題を解決しました。
+>・Skinned Mesh RendererがMesh PreviewでApply後に更新されない問題を修正しました。
+
+v0.0.4：
+>・Skinned Mesh Rendererのdecimateを最適化しました。
+
+v0.0.5：
+>・一部のモデルで発生する`IndexOutOfRangeException`問題を修正
+>・ tangentsの複製・計算における問題を修正
+
+v0.0.6：
+>・preview用のmaterialを外部参照からコード内部生成方式に変えました。
+
+v0.0.6.2：
+>・MaterialとWireframeが場合によってロードされない問題を修正
+>・decimateによるmesh情報を改善
+>・meshの容量とかの減少量の表記の改善
+
+v0.0.7：
+>・FileNotFoundException Errorを直しました。
+
+v0.0.8：
+- 表示方法を変更しました
+> wireframeシェーダーを修正しました
+> submeshにpreviewのマテリアルが適用されない問題を修正しました。
+> submeshにdecimateした時にsubmeshのマテリアル数が１になってしまう問題を修正しました。
+
+- decimateしたオブジェクトがVRCにアップロードした時に消える問題を修正しました
+> 実際にdecimateを行ったobjectが保存されるようになりました。
+
 ```
 work confirmed in
 

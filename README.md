@@ -73,6 +73,46 @@ Clicking `Revert` will restore the original file.
 
 Please note that Revert will not work after clicking on a different object (the original mesh will remain, so you can replace it to restore).
 
+### Update History
+---
+
+v0.0.1:
+> • Initial release.
+
+v0.0.2:
+> • Fixed an issue where Components disappeared after Apply.
+
+v0.0.3:
+> • Resolved issues related to BlendShapes.
+> • Fixed a problem where Skinned Mesh Renderer wasn't updating in Mesh Preview after Apply.
+
+v0.0.4:
+> • Optimized decimation for Skinned Mesh Renderer.
+
+v0.0.5:
+> • Fixed 'IndexOutOfRangeException' occurring on some models.
+> • Resolved issues with tangent duplication and calculation.
+
+v0.0.6:
+> • Changed preview material from external reference to internal code generation.
+
+v0.0.6.2:
+> • Fixed an issue where Material and Wireframe weren't loading in some cases.
+> • Improved mesh information after decimation.
+> • Enhanced display of mesh size reduction.
+
+v0.0.7:
+> • Fixed FileNotFoundException Error.
+
+v0.0.8:
+- Changed display method
+> Modified wireframe shader.
+> Fixed an issue where preview material wasn't applied to submeshes.
+> Resolved a problem where submesh material count became 1 after decimation.
+
+- Fixed an issue where decimated objects disappeared when uploaded to VRC
+> Now the actually decimated object is saved.
+
 ```
 work confirmed in
 
