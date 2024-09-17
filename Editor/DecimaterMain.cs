@@ -5,21 +5,25 @@ using System.Text.RegularExpressions;
 
 public class DecimaterMain : EditorWindow
 {
+    private const float DEFAULT_DECIMATE_LEVEL = 1.0f;
+    private const string MESH_SUFFIX = "_decimated";
+
     private GameObject selectedGameObject;
     private Mesh originalMesh;
     private Mesh decimatedMesh;
+
     private MeshPreviewer meshPreviewer;
     private MeshInfoDisplay meshInfoDisplay;
-    private float decimateLevel = 1.0f;
-    private const float DEFAULT_DECIMATE_LEVEL = 1.0f;
 
     private Material[] originalMaterials;
     private int[] originalSubmeshCount;
     private Material previewMaterial;
     private Shader previewShader;
-    private string saveFolder = "Assets/";
-    private const string MESH_SUFFIX = "_decimated";
 
+    private float decimateLevel = 1.0f;
+
+    //private string saveFolder = "Assets/";
+    
     [MenuItem("Decimater/MeshDecimater")]
     public static void ShowWindow()
     {
@@ -33,11 +37,6 @@ public class DecimaterMain : EditorWindow
 
         meshPreviewer = new MeshPreviewer(previewMaterial);
         meshInfoDisplay = new MeshInfoDisplay();
-    }
-
-    private void LoadShaders()
-    {
-        previewShader = Shader.Find("Refiaa/Wireframe");
     }
 
     private void OnSelectionChange()
@@ -88,6 +87,57 @@ public class DecimaterMain : EditorWindow
 
         GUILayout.Space(10);
         meshInfoDisplay.DisplayMeshInfo(GetCurrentMesh());
+    }
+
+    private void ApplyDecimation()
+    {
+        bool isSkinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>() != null;
+
+        EnableReadWrite(decimatedMesh);
+        MeshDecimaterUtility.DecimateMesh(originalMesh, decimatedMesh, decimateLevel, isSkinnedMeshRenderer, originalSubmeshCount);
+
+        SaveDecimatedMesh();
+
+        if (selectedGameObject.GetComponent<MeshFilter>() != null)
+        {
+            MeshFilter meshFilter = selectedGameObject.GetComponent<MeshFilter>();
+            meshFilter.sharedMesh = decimatedMesh;
+            MeshRenderer meshRenderer = selectedGameObject.GetComponent<MeshRenderer>();
+            meshRenderer.sharedMaterials = originalMaterials;
+        }
+        else if (isSkinnedMeshRenderer)
+        {
+            SkinnedMeshRenderer skinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>();
+            skinnedMeshRenderer.sharedMesh = decimatedMesh;
+            skinnedMeshRenderer.sharedMaterials = originalMaterials;
+        }
+
+        meshPreviewer.UpdatePreviewMesh(selectedGameObject);
+    }
+
+    private void RevertDecimation()
+    {
+        if (selectedGameObject.GetComponent<MeshFilter>() != null)
+        {
+            MeshFilter meshFilter = selectedGameObject.GetComponent<MeshFilter>();
+            meshFilter.sharedMesh = originalMesh;
+            MeshRenderer meshRenderer = selectedGameObject.GetComponent<MeshRenderer>();
+            meshRenderer.sharedMaterials = originalMaterials;
+        }
+        else if (selectedGameObject.GetComponent<SkinnedMeshRenderer>() != null)
+        {
+            SkinnedMeshRenderer skinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>();
+            skinnedMeshRenderer.sharedMesh = originalMesh;
+            skinnedMeshRenderer.sharedMaterials = originalMaterials;
+        }
+
+        decimateLevel = 1.0f;
+        meshPreviewer.UpdatePreviewMesh(selectedGameObject);
+    }
+
+    private void LoadShaders()
+    {
+        previewShader = Shader.Find("Refiaa/Wireframe");
     }
 
     private void UpdateSelection(GameObject newSelectedGameObject)
@@ -144,32 +194,6 @@ public class DecimaterMain : EditorWindow
         }
     }
 
-    private void ApplyDecimation()
-    {
-        bool isSkinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>() != null;
-
-        EnableReadWrite(decimatedMesh);
-        MeshDecimaterUtility.DecimateMesh(originalMesh, decimatedMesh, decimateLevel, isSkinnedMeshRenderer, originalSubmeshCount);
-
-        SaveDecimatedMesh();
-
-        if (selectedGameObject.GetComponent<MeshFilter>() != null)
-        {
-            MeshFilter meshFilter = selectedGameObject.GetComponent<MeshFilter>();
-            meshFilter.sharedMesh = decimatedMesh;
-            MeshRenderer meshRenderer = selectedGameObject.GetComponent<MeshRenderer>();
-            meshRenderer.sharedMaterials = originalMaterials;
-        }
-        else if (isSkinnedMeshRenderer)
-        {
-            SkinnedMeshRenderer skinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>();
-            skinnedMeshRenderer.sharedMesh = decimatedMesh;
-            skinnedMeshRenderer.sharedMaterials = originalMaterials;
-        }
-
-        meshPreviewer.UpdatePreviewMesh(selectedGameObject);
-    }
-
     private void SaveDecimatedMesh()
     {
         string actualMeshName = GetActualMeshName();
@@ -213,33 +237,6 @@ public class DecimaterMain : EditorWindow
         }
 
         return "Unknown";
-    }
-
-    // public void SelectSaveFolder()
-    // {
-    //     string selectedPath = EditorUtility.OpenFolderPanel("Select saved folder", saveFolder, "");
-    //     var match = Regex.Match(selectedPath, @"Assets/.*");
-    //     saveFolder = match.Success ? match.Value : "Assets/";
-    // }
-
-    private void RevertDecimation()
-    {
-        if (selectedGameObject.GetComponent<MeshFilter>() != null)
-        {
-            MeshFilter meshFilter = selectedGameObject.GetComponent<MeshFilter>();
-            meshFilter.sharedMesh = originalMesh;
-            MeshRenderer meshRenderer = selectedGameObject.GetComponent<MeshRenderer>();
-            meshRenderer.sharedMaterials = originalMaterials;
-        }
-        else if (selectedGameObject.GetComponent<SkinnedMeshRenderer>() != null)
-        {
-            SkinnedMeshRenderer skinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>();
-            skinnedMeshRenderer.sharedMesh = originalMesh;
-            skinnedMeshRenderer.sharedMaterials = originalMaterials;
-        }
-
-        decimateLevel = 1.0f;
-        meshPreviewer.UpdatePreviewMesh(selectedGameObject);
     }
 
     private Mesh GetCurrentMesh()
@@ -295,4 +292,11 @@ public class DecimaterMain : EditorWindow
 
         return material;
     }
+
+    // public void SelectSaveFolder()
+    // {
+    //     string selectedPath = EditorUtility.OpenFolderPanel("Select saved folder", saveFolder, "");
+    //     var match = Regex.Match(selectedPath, @"Assets/.*");
+    //     saveFolder = match.Success ? match.Value : "Assets/";
+    // }
 }
