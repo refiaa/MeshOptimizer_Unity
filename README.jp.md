@@ -83,6 +83,7 @@ v0.0.2：
 
 v0.0.3：
 >・BlendsShapeによる問題を解決しました。
+>
 >・Skinned Mesh RendererがMesh PreviewでApply後に更新されない問題を修正しました。
 
 v0.0.4：
@@ -90,6 +91,7 @@ v0.0.4：
 
 v0.0.5：
 >・一部のモデルで発生する`IndexOutOfRangeException`問題を修正
+>
 >・ tangentsの複製・計算における問題を修正
 
 v0.0.6：
@@ -97,11 +99,13 @@ v0.0.6：
 
 v0.0.6.2：
 >・MaterialとWireframeが場合によってロードされない問題を修正
+>
 >・decimateによるmesh情報を改善
+>
 >・meshの容量とかの減少量の表記の改善
 
 v0.0.7：
->・FileNotFoundException Errorを直しました。
+>・`FileNotFoundException Error`を直しました。
 
 v0.0.8：
 

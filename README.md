@@ -84,6 +84,7 @@ v0.0.2:
 
 v0.0.3:
 > • Resolved issues related to BlendShapes.
+>
 > • Fixed a problem where Skinned Mesh Renderer wasn't updating in Mesh Preview after Apply.
 
 v0.0.4:
@@ -91,6 +92,7 @@ v0.0.4:
 
 v0.0.5:
 > • Fixed 'IndexOutOfRangeException' occurring on some models.
+>
 > • Resolved issues with tangent duplication and calculation.
 
 v0.0.6:
@@ -98,11 +100,13 @@ v0.0.6:
 
 v0.0.6.2:
 > • Fixed an issue where Material and Wireframe weren't loading in some cases.
+>
 > • Improved mesh information after decimation.
+>
 > • Enhanced display of mesh size reduction.
 
 v0.0.7:
-> • Fixed FileNotFoundException Error.
+> • Fixed `FileNotFoundException Error`.
 
 v0.0.8:
 
