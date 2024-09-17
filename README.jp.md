@@ -104,12 +104,15 @@ v0.0.7：
 >・FileNotFoundException Errorを直しました。
 
 v0.0.8：
-- 表示方法を変更しました
-> wireframeシェーダーを修正しました
-> submeshにpreviewのマテリアルが適用されない問題を修正しました。
-> submeshにdecimateした時にsubmeshのマテリアル数が１になってしまう問題を修正しました。
 
-- decimateしたオブジェクトがVRCにアップロードした時に消える問題を修正しました
+・submeshにdecimateした時にsubmeshのマテリアル数が１になってしまう問題を修正しました。
+
+・表示方法を変更しました
+> wireframeシェーダーを修正しました
+>
+> submeshにpreviewのマテリアルが適用されない問題を修正しました。
+
+・decimateしたオブジェクトがVRCにアップロードした時に消える問題を修正しました
 > 実際にdecimateを行ったobjectが保存されるようになりました。
 
 ```

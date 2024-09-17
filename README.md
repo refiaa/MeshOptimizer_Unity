@@ -105,12 +105,15 @@ v0.0.7:
 > • Fixed FileNotFoundException Error.
 
 v0.0.8:
-- Changed display method
-> Modified wireframe shader.
-> Fixed an issue where preview material wasn't applied to submeshes.
-> Resolved a problem where submesh material count became 1 after decimation.
 
-- Fixed an issue where decimated objects disappeared when uploaded to VRC
+・Resolved a problem where submesh material count became 1 after decimation.
+
+・Changed display method
+> Modified wireframe shader.
+> 
+> Fixed an issue where preview material wasn't applied to submeshes.
+
+・Fixed an issue where decimated objects disappeared when uploaded to VRC
 > Now the actually decimated object is saved.
 
 ```
