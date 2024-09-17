@@ -3,8 +3,10 @@
 # Decimater For Unity
 [![GitHub release](https://img.shields.io/github/release/refiaa/MeshDecimater_Unity.svg?color=Green)](https://github.com/refiaa/MeshDecimater_Unity/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/refiaa/MeshDecimater_Unity/total?color=6451f1)](https://github.com/refiaa/MeshDecimater_Unity/releases/latest)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/68363bc4bcd84df3b43651374cb8caea)](https://app.codacy.com/gh/refiaa/MeshDecimater_Unity/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![MeshDecimater_Unity issues](https://img.shields.io/github/issues/refiaa/MeshDecimater_Unity?color=yellow)](https://github.com/refiaa/MeshDecimater_Unity/issues)
 [![MeshDecimater_Unity License](https://img.shields.io/github/license/refiaa/MeshDecimater_Unity?color=orange)](#)
+
 <em><h5 align="center">(using Unity 2022.3.22f1)</h5></em>
 
 ![git](https://github.com/user-attachments/assets/4ce84a66-0117-4b19-8761-925cd3c5088f)
