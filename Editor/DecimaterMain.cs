@@ -21,8 +21,6 @@ public class DecimaterMain : EditorWindow
     private Shader previewShader;
 
     private float decimateLevel = 1.0f;
-
-    //private string saveFolder = "Assets/";
     
     [MenuItem("Decimater/MeshDecimater")]
     public static void ShowWindow()
@@ -292,11 +290,4 @@ public class DecimaterMain : EditorWindow
 
         return material;
     }
-
-    // public void SelectSaveFolder()
-    // {
-    //     string selectedPath = EditorUtility.OpenFolderPanel("Select saved folder", saveFolder, "");
-    //     var match = Regex.Match(selectedPath, @"Assets/.*");
-    //     saveFolder = match.Success ? match.Value : "Assets/";
-    // }
 }
