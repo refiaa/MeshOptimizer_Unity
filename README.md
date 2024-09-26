@@ -1,6 +1,6 @@
 <div align="center">
 
-# Decimater For Unity
+# Optimizer For Unity
 [![GitHub release](https://img.shields.io/github/release/refiaa/MeshDecimater_Unity.svg?color=Green)](https://github.com/refiaa/MeshDecimater_Unity/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/refiaa/MeshDecimater_Unity/total?color=6451f1)](https://github.com/refiaa/MeshDecimater_Unity/releases/latest)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/68363bc4bcd84df3b43651374cb8caea)](https://app.codacy.com/gh/refiaa/MeshDecimater_Unity/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
