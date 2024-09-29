@@ -32,37 +32,35 @@ decimate functions are created by using **UnityMeshSimplifier**[[1]][UnityMeshSi
 
 tree have to looks like this
 
-```shell
-MeshDecimater_Unity
-│  .gitignore
-│  LICENSE
-│  README.jp.md
-│  README.md
-│
-├─.github
-│  └─ISSUE_TEMPLATE
-│          bugreport.yml
-│          config.yml
-│
-├─Editor
-│      DecimaterMain.cs
-│      DecimaterMain.cs.meta
-│      MeshInfoDisplay.cs
-│      MeshInfoDisplay.cs.meta
-│      MeshPreviewer.cs
-│      MeshPreviewer.cs.meta
-│      WireframeDrawer.cs
-│      WireframeDrawer.cs.meta
-│
-├─Runtime
-│      MeshDecimaterUtility.cs
-│      MeshDecimaterUtility.cs.meta
-│      MeshUtils.cs
-│      MeshUtils.cs.meta
-│
-└─Shader
-        Wireframe.shader
-        Wireframe.shader.meta
+```sql
+Assets
+├─ *UnityMeshSimplifier* // Should be here !
+└─ MeshDecimater_Unity // MeshOptimizer_Unity directory name is `MeshDecimater_Unity`
+   ├─  .gitignore
+   │  LICENSE
+   │  README.jp.md
+   │  README.md
+   │
+   ├─Editor
+   │      DecimaterMain.cs
+   │      DecimaterMain.cs.meta
+   │      MeshInfoDisplay.cs
+   │      MeshInfoDisplay.cs.meta
+   │      MeshPreviewer.cs
+   │      MeshPreviewer.cs.meta
+   │      WireframeDrawer.cs
+   │      WireframeDrawer.cs.meta
+   │
+   ├─Runtime
+   │      MeshDecimaterUtility.cs
+   │      MeshDecimaterUtility.cs.meta
+   │      MeshUtils.cs
+   │      MeshUtils.cs.meta
+   │
+   └─Shader
+         Wireframe.shader
+         Wireframe.shader.meta
+
 ```
 
 ### How to use
