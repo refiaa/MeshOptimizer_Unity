@@ -24,12 +24,12 @@ public class DecimaterMain : EditorWindow
 
     private bool isFirstDecimation = true;
 
-    [MenuItem("MeshOptimizer/MeshOptimizer")]
+    [MenuItem("MeshOptimizer/Mesh Optimizer GUI")]
     public static void ShowWindow()
     {
         GetWindow<DecimaterMain>("Mesh Optimizer GUI");
     }
-
+    
     private void OnEnable()
     {
         LoadShaders();
@@ -66,9 +66,9 @@ public class DecimaterMain : EditorWindow
         meshPreviewer.PreviewMesh(selectedGameObject, previewRect);
 
         GUILayout.Space(10);
-        GUILayout.Label("Decimate Level", EditorStyles.boldLabel);
+        GUILayout.Label("Optimize Level", EditorStyles.boldLabel);
         EditorGUI.BeginChangeCheck();
-        decimateLevel = EditorGUILayout.Slider("Decimate Level", decimateLevel, 0.1f, 1.0f);
+        decimateLevel = EditorGUILayout.Slider("Optimize Level", decimateLevel, 0.1f, 1.0f);
         if (EditorGUI.EndChangeCheck())
         {
             Mesh currentMesh = GetCurrentMesh();
