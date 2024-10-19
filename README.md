@@ -123,6 +123,14 @@ v0.0.8:
 ・Fixed an issue where decimated objects disappeared when uploaded to VRC
 > Now the actually decimated object is saved.
 
+v0.0.9:
+
+> Change name "Decimate" to "Optimizer" 
+>
+> `Revert to Original` Added.
+> 
+> `Optimize(decimate) level` is now save globally
+
 ```
 work confirmed in
 
