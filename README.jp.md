@@ -122,6 +122,14 @@ v0.0.8：
 ・decimateしたオブジェクトがVRCにアップロードした時に消える問題を修正しました
 > decimateを行ったobjectがAssetに保存されるようになりました。
 
+v0.0.9:
+
+> 名前を"Decimate"から"Optimizer"に変更しました
+>
+> `Revert to Original`を追加しました
+> 
+> `Optimize(decimate) level`が保存されます
+
 ```
 work confirmed in
 

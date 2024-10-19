@@ -21,13 +21,15 @@ public class DecimaterMain : EditorWindow
     private Shader previewShader;
 
     private float decimateLevel = 1.0f;
-    
-    [MenuItem("Decimater/MeshDecimater")]
+
+    private bool isFirstDecimation = true;
+
+    [MenuItem("MeshOptimizer/Mesh Optimizer GUI")]
     public static void ShowWindow()
     {
-        GetWindow<DecimaterMain>("Decimater for Unity");
+        GetWindow<DecimaterMain>("Mesh Optimizer GUI");
     }
-
+    
     private void OnEnable()
     {
         LoadShaders();
@@ -64,23 +66,32 @@ public class DecimaterMain : EditorWindow
         meshPreviewer.PreviewMesh(selectedGameObject, previewRect);
 
         GUILayout.Space(10);
-        GUILayout.Label("Decimate Level", EditorStyles.boldLabel);
+        GUILayout.Label("Optimize Level", EditorStyles.boldLabel);
         EditorGUI.BeginChangeCheck();
-        decimateLevel = EditorGUILayout.Slider("Decimate Level", decimateLevel, 0.1f, 1.0f);
+        decimateLevel = EditorGUILayout.Slider("Optimize Level", decimateLevel, 0.1f, 1.0f);
         if (EditorGUI.EndChangeCheck())
         {
-            // TODO:decimateLevelが変更された時の値の保存ロジックを追加したい。
+            Mesh currentMesh = GetCurrentMesh();
+            if (currentMesh != null)
+            {
+                MeshRevertManager.StoreDecimateLevel(currentMesh, decimateLevel);
+            }
         }
 
         GUILayout.Space(10);
-        if (GUILayout.Button("Apply Decimation"))
+        if (GUILayout.Button("Apply Optimization"))
         {
             ApplyDecimation();
         }
-        
+
         if (GUILayout.Button("Revert"))
         {
             RevertDecimation();
+        }
+
+        if (GUILayout.Button("Revert to Original"))
+        {
+            RevertToOriginalMesh();
         }
 
         GUILayout.Space(10);
@@ -95,6 +106,10 @@ public class DecimaterMain : EditorWindow
         MeshDecimaterUtility.DecimateMesh(originalMesh, decimatedMesh, decimateLevel, isSkinnedMeshRenderer, originalSubmeshCount);
 
         SaveDecimatedMesh();
+
+        MeshRevertManager.StoreOriginalMesh(decimatedMesh, originalMesh);
+
+        MeshRevertManager.StoreDecimateLevel(decimatedMesh, decimateLevel);
 
         if (selectedGameObject.GetComponent<MeshFilter>() != null)
         {
@@ -111,6 +126,14 @@ public class DecimaterMain : EditorWindow
         }
 
         meshPreviewer.UpdatePreviewMesh(selectedGameObject);
+
+        // errorめんどいの
+        if (isFirstDecimation)
+        {
+            isFirstDecimation = false;
+            Debug.LogWarning("First decimation performed. Applying decimation again to prevent mesh data mismatch error.");
+            ApplyDecimation();
+        }
     }
 
     private void RevertDecimation()
@@ -130,7 +153,54 @@ public class DecimaterMain : EditorWindow
         }
 
         decimateLevel = 1.0f;
+        MeshRevertManager.StoreDecimateLevel(originalMesh, decimateLevel);
+
         meshPreviewer.UpdatePreviewMesh(selectedGameObject);
+
+        isFirstDecimation = true;
+    }
+
+    private void RevertToOriginalMesh()
+    {
+        Mesh currentMesh = GetCurrentMesh();
+        if (currentMesh == null)
+        {
+            Debug.LogWarning("No mesh to revert.");
+            return;
+        }
+
+        Mesh originalMeshFromManager = MeshRevertManager.GetOriginalMesh(currentMesh);
+        if (originalMeshFromManager != null)
+        {
+            if (selectedGameObject.GetComponent<MeshFilter>() != null)
+            {
+                MeshFilter meshFilter = selectedGameObject.GetComponent<MeshFilter>();
+                meshFilter.sharedMesh = originalMeshFromManager;
+                MeshRenderer meshRenderer = selectedGameObject.GetComponent<MeshRenderer>();
+                meshRenderer.sharedMaterials = originalMaterials;
+            }
+            else if (selectedGameObject.GetComponent<SkinnedMeshRenderer>() != null)
+            {
+                SkinnedMeshRenderer skinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>();
+                skinnedMeshRenderer.sharedMesh = originalMeshFromManager;
+                skinnedMeshRenderer.sharedMaterials = originalMaterials;
+            }
+            Debug.Log("Reverted to original mesh.");
+
+            decimateLevel = 1.0f;
+            MeshRevertManager.StoreDecimateLevel(originalMeshFromManager, decimateLevel);
+        }
+        else
+        {
+            Debug.LogWarning("Original mesh not found.");
+
+            decimateLevel = 1.0f;
+            MeshRevertManager.StoreDecimateLevel(currentMesh, decimateLevel);
+        }
+
+        meshPreviewer.UpdatePreviewMesh(selectedGameObject);
+
+        isFirstDecimation = true;
     }
 
     private void LoadShaders()
@@ -142,7 +212,7 @@ public class DecimaterMain : EditorWindow
     {
         if (newSelectedGameObject != selectedGameObject)
         {
-            decimateLevel = DEFAULT_DECIMATE_LEVEL;
+            isFirstDecimation = true;
         }
 
         if (newSelectedGameObject != null)
@@ -155,9 +225,12 @@ public class DecimaterMain : EditorWindow
                 selectedGameObject = newSelectedGameObject;
                 originalMesh = meshFilter.sharedMesh;
                 EnableReadWrite(originalMesh);
+
+                decimateLevel = MeshRevertManager.GetDecimateLevel(originalMesh);
+
                 decimatedMesh = Instantiate(originalMesh);
                 meshInfoDisplay.SetOriginalMesh(originalMesh);
-                
+
                 Renderer renderer = newSelectedGameObject.GetComponent<Renderer>();
                 originalMaterials = renderer.sharedMaterials;
                 originalSubmeshCount = new int[originalMesh.subMeshCount];
@@ -175,9 +248,12 @@ public class DecimaterMain : EditorWindow
                 selectedGameObject = newSelectedGameObject;
                 originalMesh = skinnedMeshRenderer.sharedMesh;
                 EnableReadWrite(originalMesh);
+
+                decimateLevel = MeshRevertManager.GetDecimateLevel(originalMesh);
+
                 decimatedMesh = Instantiate(originalMesh);
                 meshInfoDisplay.SetOriginalMesh(originalMesh);
-                
+
                 originalMaterials = skinnedMeshRenderer.sharedMaterials;
                 originalSubmeshCount = new int[originalMesh.subMeshCount];
                 for (int i = 0; i < originalMesh.subMeshCount; i++)
@@ -195,7 +271,7 @@ public class DecimaterMain : EditorWindow
     private void SaveDecimatedMesh()
     {
         string actualMeshName = GetActualMeshName();
-        
+
         string originalPath = AssetDatabase.GetAssetPath(originalMesh);
         string directory = Path.GetDirectoryName(originalPath);
         string newFileName = $"{actualMeshName}{MESH_SUFFIX}.asset";
