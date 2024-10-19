@@ -37,4 +37,37 @@ public static class MeshRevertManager
             return $"{assetPath}:{mesh.name}";
         }
     }
+
+    private static string GetMeshUniqueID(Mesh mesh)
+    {
+        string guid;
+        long localId;
+        if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(mesh, out guid, out localId))
+        {
+            return $"{guid}_{localId}";
+        }
+        else
+        {
+            return mesh.GetInstanceID().ToString();
+        }
+    }
+
+    public static void StoreDecimateLevel(Mesh mesh, float decimateLevel)
+    {
+        string uniqueID = GetMeshUniqueID(mesh);
+        if (!string.IsNullOrEmpty(uniqueID))
+        {
+            EditorPrefs.SetFloat("DecimateLevel_" + uniqueID, decimateLevel);
+        }
+    }
+
+    public static float GetDecimateLevel(Mesh mesh)
+    {
+        string uniqueID = GetMeshUniqueID(mesh);
+        if (!string.IsNullOrEmpty(uniqueID))
+        {
+            return EditorPrefs.GetFloat("DecimateLevel_" + uniqueID, 1.0f);
+        }
+        return 1.0f;
+    }
 }

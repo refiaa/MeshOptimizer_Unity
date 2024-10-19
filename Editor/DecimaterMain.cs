@@ -71,7 +71,11 @@ public class DecimaterMain : EditorWindow
         decimateLevel = EditorGUILayout.Slider("Decimate Level", decimateLevel, 0.1f, 1.0f);
         if (EditorGUI.EndChangeCheck())
         {
-            // TODO:decimateLevelが変更された時の値の保存ロジックを追加したい。
+            Mesh currentMesh = GetCurrentMesh();
+            if (currentMesh != null)
+            {
+                MeshRevertManager.StoreDecimateLevel(currentMesh, decimateLevel);
+            }
         }
 
         GUILayout.Space(10);
@@ -104,6 +108,8 @@ public class DecimaterMain : EditorWindow
         SaveDecimatedMesh();
 
         MeshRevertManager.StoreOriginalMesh(decimatedMesh, originalMesh);
+
+        MeshRevertManager.StoreDecimateLevel(decimatedMesh, decimateLevel);
 
         if (selectedGameObject.GetComponent<MeshFilter>() != null)
         {
@@ -147,6 +153,8 @@ public class DecimaterMain : EditorWindow
         }
 
         decimateLevel = 1.0f;
+        MeshRevertManager.StoreDecimateLevel(originalMesh, decimateLevel);
+
         meshPreviewer.UpdatePreviewMesh(selectedGameObject);
 
         isFirstDecimation = true;
@@ -178,13 +186,18 @@ public class DecimaterMain : EditorWindow
                 skinnedMeshRenderer.sharedMaterials = originalMaterials;
             }
             Debug.Log("Reverted to original mesh.");
+
+            decimateLevel = 1.0f;
+            MeshRevertManager.StoreDecimateLevel(originalMeshFromManager, decimateLevel);
         }
         else
         {
             Debug.LogWarning("Original mesh not found.");
+
+            decimateLevel = 1.0f;
+            MeshRevertManager.StoreDecimateLevel(currentMesh, decimateLevel);
         }
 
-        decimateLevel = 1.0f;
         meshPreviewer.UpdatePreviewMesh(selectedGameObject);
 
         isFirstDecimation = true;
@@ -199,7 +212,6 @@ public class DecimaterMain : EditorWindow
     {
         if (newSelectedGameObject != selectedGameObject)
         {
-            decimateLevel = DEFAULT_DECIMATE_LEVEL;
             isFirstDecimation = true;
         }
 
@@ -213,6 +225,9 @@ public class DecimaterMain : EditorWindow
                 selectedGameObject = newSelectedGameObject;
                 originalMesh = meshFilter.sharedMesh;
                 EnableReadWrite(originalMesh);
+
+                decimateLevel = MeshRevertManager.GetDecimateLevel(originalMesh);
+
                 decimatedMesh = Instantiate(originalMesh);
                 meshInfoDisplay.SetOriginalMesh(originalMesh);
 
@@ -233,6 +248,9 @@ public class DecimaterMain : EditorWindow
                 selectedGameObject = newSelectedGameObject;
                 originalMesh = skinnedMeshRenderer.sharedMesh;
                 EnableReadWrite(originalMesh);
+
+                decimateLevel = MeshRevertManager.GetDecimateLevel(originalMesh);
+
                 decimatedMesh = Instantiate(originalMesh);
                 meshInfoDisplay.SetOriginalMesh(originalMesh);
 
