@@ -24,10 +24,10 @@ public class DecimaterMain : EditorWindow
 
     private bool isFirstDecimation = true;
 
-    [MenuItem("Decimater/MeshDecimater")]
+    [MenuItem("MeshOptimizer/MeshOptimizer")]
     public static void ShowWindow()
     {
-        GetWindow<DecimaterMain>("Decimater for Unity");
+        GetWindow<DecimaterMain>("Mesh Optimizer GUI");
     }
 
     private void OnEnable()
@@ -79,7 +79,7 @@ public class DecimaterMain : EditorWindow
         }
 
         GUILayout.Space(10);
-        if (GUILayout.Button("Apply Decimation"))
+        if (GUILayout.Button("Apply Optimization"))
         {
             ApplyDecimation();
         }
