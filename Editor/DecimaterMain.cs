@@ -20,7 +20,7 @@ public class DecimaterMain : EditorWindow
     private Material previewMaterial;
     private Shader previewShader;
 
-    private float decimateLevel = 1.0f;
+    private float decimateLevel = DEFAULT_DECIMATE_LEVEL;
 
     private bool isFirstDecimation = true;
 
@@ -152,7 +152,7 @@ public class DecimaterMain : EditorWindow
             skinnedMeshRenderer.sharedMaterials = originalMaterials;
         }
 
-        decimateLevel = 1.0f;
+        decimateLevel = DEFAULT_DECIMATE_LEVEL;
         MeshRevertManager.StoreDecimateLevel(originalMesh, decimateLevel);
 
         meshPreviewer.UpdatePreviewMesh(selectedGameObject);
@@ -187,15 +187,17 @@ public class DecimaterMain : EditorWindow
             }
             Debug.Log("Reverted to original mesh.");
 
-            decimateLevel = 1.0f;
+            decimateLevel = DEFAULT_DECIMATE_LEVEL;
             MeshRevertManager.StoreDecimateLevel(originalMeshFromManager, decimateLevel);
+            meshInfoDisplay.SetOriginalMesh(originalMeshFromManager);
         }
         else
         {
             Debug.LogWarning("Original mesh not found.");
 
-            decimateLevel = 1.0f;
+            decimateLevel = DEFAULT_DECIMATE_LEVEL;
             MeshRevertManager.StoreDecimateLevel(currentMesh, decimateLevel);
+            meshInfoDisplay.SetOriginalMesh(currentMesh);
         }
 
         meshPreviewer.UpdatePreviewMesh(selectedGameObject);

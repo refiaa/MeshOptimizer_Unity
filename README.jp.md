@@ -130,6 +130,10 @@ v0.0.9:
 > 
 > `Optimize(decimate) level`が保存されます
 
+v0.0.9.1:
+
+> Minor Bug fixes
+
 ```
 work confirmed in
 
