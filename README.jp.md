@@ -9,7 +9,7 @@
 
 <em><h5 align="center">(using Unity 2022.3.22f1)</h5></em>
 
-![GIF](./img/showup.gif)
+![IMG](./img/main.png)
 
 | [English](./README.md) | **日本語** |
 
@@ -65,7 +65,7 @@ Assets
 
 ### 使い方
 ---
-![IMG](./img/main.png)
+![GIF](./img/showup.gif)
 
 Meshが入ってるオブジェクトをHierarchyから選択するか、ObjectFieldから選んで使用してください。
 
