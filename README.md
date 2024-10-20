@@ -9,7 +9,7 @@
 
 <em><h5 align="center">(using Unity 2022.3.22f1)</h5></em>
 
-![GIF](./img/showup.gif)
+![IMG](./img/main.png)
 
 | **English** | [日本語](./README.jp.md) |
 
@@ -65,7 +65,7 @@ Assets
 
 ### How to use
 ---
-![IMG](./img/main.png)
+![GIF](./img/showup.gif)
 
 
 Select an object with a mesh from the Hierarchy or choose it from the ObjectField to use the plugin.
