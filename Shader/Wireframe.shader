@@ -43,7 +43,7 @@ Shader "Refiaa/Wireframe"
         Pass
         {
             Name "Wireframe"
-            Tags { "LightMode" = "Always" }
+            Tags { "LightMode" = "ForwardBase" }
             ZWrite Off
             Blend SrcAlpha OneMinusSrcAlpha
             Cull Off

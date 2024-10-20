@@ -131,6 +131,11 @@ v0.0.9:
 > 
 > `Optimize(decimate) level` is now save globally
 
+v0.0.9.1:
+
+> Minor Bug fixes
+
+
 ```
 work confirmed in
 
