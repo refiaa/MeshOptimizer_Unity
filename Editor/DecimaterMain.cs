@@ -71,10 +71,7 @@ public class DecimaterMain : EditorWindow
         decimateLevel = EditorGUILayout.Slider("Optimize Level", decimateLevel, 0.1f, 1.0f);
         if (EditorGUI.EndChangeCheck())
         {
-            if (originalMesh != null)
-            {
-                MeshRevertManager.StoreDecimateLevel(originalMesh, decimateLevel);
-            }
+            // NOTHING HERE
         }
 
         GUILayout.Space(10);
@@ -110,6 +107,9 @@ public class DecimaterMain : EditorWindow
 
         EnableReadWrite(originalMesh);
 
+        // save "level" to history
+        MeshRevertManager.PushDecimateLevel(originalMesh, decimateLevel);
+
         MeshDecimaterUtility.DecimateMesh(originalMesh, decimatedMesh, decimateLevel, isSkinnedMeshRenderer, originalSubmeshCount, boneCount);
 
         decimatedMesh.RecalculateNormals();
@@ -118,8 +118,6 @@ public class DecimaterMain : EditorWindow
         SaveDecimatedMesh();
 
         MeshRevertManager.StoreOriginalMesh(decimatedMesh, originalMesh);
-
-        MeshRevertManager.StoreDecimateLevel(originalMesh, decimateLevel);
 
         EditorApplication.delayCall += () =>
         {
@@ -180,26 +178,36 @@ public class DecimaterMain : EditorWindow
 
     private void RevertDecimation()
     {
-        if (selectedGameObject.GetComponent<MeshFilter>() != null)
+        if (originalMesh == null)
         {
-            MeshFilter meshFilter = selectedGameObject.GetComponent<MeshFilter>();
-            meshFilter.sharedMesh = originalMesh;
-            MeshRenderer meshRenderer = selectedGameObject.GetComponent<MeshRenderer>();
-            meshRenderer.sharedMaterials = originalMaterials;
-        }
-        else if (selectedGameObject.GetComponent<SkinnedMeshRenderer>() != null)
-        {
-            SkinnedMeshRenderer skinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>();
-            skinnedMeshRenderer.sharedMesh = originalMesh;
-            skinnedMeshRenderer.sharedMaterials = originalMaterials;
+            Debug.LogWarning("Original mesh not found.");
+            return;
         }
 
-        decimateLevel = DEFAULT_DECIMATE_LEVEL;
-        MeshRevertManager.StoreDecimateLevel(originalMesh, decimateLevel);
+        float? previousDecimateLevel = MeshRevertManager.RevertDecimateLevel(originalMesh);
+        if (previousDecimateLevel.HasValue)
+        {
+            decimateLevel = previousDecimateLevel.Value;
+            MeshRevertManager.PushDecimateLevel(originalMesh, decimateLevel); 
+
+            ApplyDecimation();
+
+            Debug.Log($"Reverted to previous decimate level: {decimateLevel}");
+        }
+        else
+        {
+            if (decimateLevel == DEFAULT_DECIMATE_LEVEL)
+            {
+                EditorUtility.DisplayDialog("Revert Failed", "Not able to revert. Already at the default decimate level.", "OK");
+            }
+            else
+            {
+                EditorUtility.DisplayDialog("Revert Failed", "Nothing to revert.", "OK");
+            }
+            Debug.LogWarning("Revert failed: No previous decimate level available.");
+        }
 
         meshPreviewer.UpdatePreviewMesh(selectedGameObject);
-
-        isFirstDecimation = true;
     }
 
     private void RevertToOriginalMesh()
@@ -230,7 +238,7 @@ public class DecimaterMain : EditorWindow
             Debug.Log("Reverted to original mesh.");
 
             decimateLevel = DEFAULT_DECIMATE_LEVEL;
-            MeshRevertManager.StoreDecimateLevel(originalMeshFromManager, decimateLevel);
+            MeshRevertManager.PushDecimateLevel(originalMeshFromManager, decimateLevel);
             meshInfoDisplay.SetOriginalMesh(originalMeshFromManager);
         }
         else
@@ -238,7 +246,7 @@ public class DecimaterMain : EditorWindow
             Debug.LogWarning("Original mesh not found.");
 
             decimateLevel = DEFAULT_DECIMATE_LEVEL;
-            MeshRevertManager.StoreDecimateLevel(currentMesh, decimateLevel);
+            MeshRevertManager.PushDecimateLevel(currentMesh, decimateLevel);
             meshInfoDisplay.SetOriginalMesh(currentMesh);
         }
 
