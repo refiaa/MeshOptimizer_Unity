@@ -17,7 +17,7 @@ Blenderのdecimateみたいな機能をUnity上で使えるようにするPlugin
 
 このプラグインは、`Mesh Filter`と`Skinned Mesh Renderer`の両方に対応しています。
 
-Unityにインポートできるすべてのメッシュ形式（.fbx、.glTF、.dae (Collada)、.obj、.GLB、.assetなど）で使用可能です。
+Unityにインポートできるすべてのメッシュ形式（`.fbx`, `.glTF`, `.dae (Collada)`, `.obj`, `.GLB`, `.asset`など）で使用可能です。
 
 また、最適化を行っても、BlendShapesやBone、Bone Weights、SubMeshもそのまま維持されます。
 

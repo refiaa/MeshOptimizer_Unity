@@ -17,7 +17,7 @@ This plugin enables a functionality similar to Blender's decimate feature within
 
 This plugin supports both `Mesh Filter` and `Skinned Mesh Renderer`. 
 
-It can handle used on any mesh that can be imported into Unity (.fbx, .glTF, .dae (Collada), .obj, .GLB, .asset, etc.). 
+It can handle used on any mesh that can be imported into Unity (`.fbx`, `.glTF`, `.dae (Collada)`, `.obj`, `.GLB`, `.asset`, etc.). 
 
 Additionally, even after optimization, BlendShapes, Bones, Bone Weights, and Sub Meshes will be preserved.
 
