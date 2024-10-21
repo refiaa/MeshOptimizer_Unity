@@ -15,6 +15,12 @@
 
 Blenderのdecimateみたいな機能をUnity上で使えるようにするPluginです。
 
+このプラグインは、`Mesh Filter`と`Skinned Mesh Renderer`の両方に対応しています。
+
+Unityにインポートできるすべてのメッシュ形式（.fbx、.glTF、.dae (Collada)、.obj、.GLB、.assetなど）で使用可能です。
+
+また、最適化を行っても、BlendShapesやBone、Bone Weights、SubMeshもそのまま維持されます。
+
 **UnityMeshSimplifier**[[1]][UnityMeshSimplifier_github]を利用して作成されました。
 
 <div align="left">
@@ -148,5 +154,5 @@ work confirmed in
   [download_link2]: https://github.com/refiaa/MeshDecimater_Unity/releases/latest
 
 ```
-Boothのやつと同じやつです。内容に変わりはありません。(shaderの名前がちょっと違うくらい)
+Boothのやつと同じやつです。内容に変わりはありません。
 ```
