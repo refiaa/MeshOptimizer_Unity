@@ -140,6 +140,18 @@ v0.0.9.1:
 
 > Minor Bug fixes
 
+v0.0.9.2:
+
+> Bug fix ; 
+>
+> - Fix Mesh vanishing problem cause by `(Clone)` and `_Decimated`.
+>
+> - Fix SkinMeshRenderer issue in apply optimization
+>
+> - Fix Revert Button to undo 
+>
+> - Change name of some GUI (`Revert` to `Undo`, `Revert to Original` to `Reset To Original Mesh`)
+
 ```
 work confirmed in
 

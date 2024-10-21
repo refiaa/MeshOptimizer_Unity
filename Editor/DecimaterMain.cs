@@ -29,7 +29,7 @@ public class DecimaterMain : EditorWindow
     {
         GetWindow<DecimaterMain>("Mesh Optimizer GUI");
     }
-    
+
     private void OnEnable()
     {
         LoadShaders();
@@ -71,11 +71,7 @@ public class DecimaterMain : EditorWindow
         decimateLevel = EditorGUILayout.Slider("Optimize Level", decimateLevel, 0.1f, 1.0f);
         if (EditorGUI.EndChangeCheck())
         {
-            Mesh currentMesh = GetCurrentMesh();
-            if (currentMesh != null)
-            {
-                MeshRevertManager.StoreDecimateLevel(currentMesh, decimateLevel);
-            }
+            // NOTHING HERE
         }
 
         GUILayout.Space(10);
@@ -84,12 +80,12 @@ public class DecimaterMain : EditorWindow
             ApplyDecimation();
         }
 
-        if (GUILayout.Button("Revert"))
+        if (GUILayout.Button("Undo"))
         {
             RevertDecimation();
         }
 
-        if (GUILayout.Button("Revert to Original"))
+        if (GUILayout.Button("Reset To Original Mesh"))
         {
             RevertToOriginalMesh();
         }
@@ -101,15 +97,41 @@ public class DecimaterMain : EditorWindow
     private void ApplyDecimation()
     {
         bool isSkinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>() != null;
+        int boneCount = 0;
 
-        EnableReadWrite(decimatedMesh);
-        MeshDecimaterUtility.DecimateMesh(originalMesh, decimatedMesh, decimateLevel, isSkinnedMeshRenderer, originalSubmeshCount);
+        if (isSkinnedMeshRenderer)
+        {
+            SkinnedMeshRenderer skinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>();
+            boneCount = skinnedMeshRenderer.bones.Length;
+        }
+
+        EnableReadWrite(originalMesh);
+
+        // save "level" to history
+        MeshRevertManager.PushDecimateLevel(originalMesh, decimateLevel);
+
+        MeshDecimaterUtility.DecimateMesh(originalMesh, decimatedMesh, decimateLevel, isSkinnedMeshRenderer, originalSubmeshCount, boneCount);
+
+        decimatedMesh.RecalculateNormals();
+        decimatedMesh.RecalculateBounds();
 
         SaveDecimatedMesh();
 
         MeshRevertManager.StoreOriginalMesh(decimatedMesh, originalMesh);
 
-        MeshRevertManager.StoreDecimateLevel(decimatedMesh, decimateLevel);
+        EditorApplication.delayCall += () =>
+        {
+            ApplyMeshToRenderer(isSkinnedMeshRenderer);
+        };
+
+        meshPreviewer.UpdatePreviewMesh(selectedGameObject);
+
+        isFirstDecimation = false;
+    }
+
+    private void ApplyMeshToRenderer(bool isSkinnedMeshRenderer)
+    {
+        if (selectedGameObject == null) return;
 
         if (selectedGameObject.GetComponent<MeshFilter>() != null)
         {
@@ -121,43 +143,71 @@ public class DecimaterMain : EditorWindow
         else if (isSkinnedMeshRenderer)
         {
             SkinnedMeshRenderer skinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>();
+
+            skinnedMeshRenderer.sharedMesh = null;
+
             skinnedMeshRenderer.sharedMesh = decimatedMesh;
             skinnedMeshRenderer.sharedMaterials = originalMaterials;
+
+            skinnedMeshRenderer.updateWhenOffscreen = true;
+
+            Animator animator = selectedGameObject.GetComponent<Animator>();
+            if (animator != null)
+            {
+                animator.Rebind();
+            }
+
+            ValidateBoneWeights(skinnedMeshRenderer);
         }
+    }
 
-        meshPreviewer.UpdatePreviewMesh(selectedGameObject);
+    private void ValidateBoneWeights(SkinnedMeshRenderer skinnedMeshRenderer)
+    {
+        Mesh mesh = skinnedMeshRenderer.sharedMesh;
+        int boneCount = skinnedMeshRenderer.bones.Length;
 
-        // errorめんどいの
-        if (isFirstDecimation)
+        for (int i = 0; i < mesh.boneWeights.Length; i++)
         {
-            isFirstDecimation = false;
-            Debug.LogWarning("First decimation performed. Applying decimation again to prevent mesh data mismatch error.");
-            ApplyDecimation();
+            BoneWeight bw = mesh.boneWeights[i];
+            if (bw.boneIndex0 >= boneCount || bw.boneIndex1 >= boneCount || bw.boneIndex2 >= boneCount || bw.boneIndex3 >= boneCount)
+            {
+                Debug.LogError($"Invalid bone index detected in boneWeights at vertex {i}: boneIndex0={bw.boneIndex0}, boneIndex1={bw.boneIndex1}, boneIndex2={bw.boneIndex2}, boneIndex3={bw.boneIndex3}");
+            }
         }
     }
 
     private void RevertDecimation()
     {
-        if (selectedGameObject.GetComponent<MeshFilter>() != null)
+        if (originalMesh == null)
         {
-            MeshFilter meshFilter = selectedGameObject.GetComponent<MeshFilter>();
-            meshFilter.sharedMesh = originalMesh;
-            MeshRenderer meshRenderer = selectedGameObject.GetComponent<MeshRenderer>();
-            meshRenderer.sharedMaterials = originalMaterials;
-        }
-        else if (selectedGameObject.GetComponent<SkinnedMeshRenderer>() != null)
-        {
-            SkinnedMeshRenderer skinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>();
-            skinnedMeshRenderer.sharedMesh = originalMesh;
-            skinnedMeshRenderer.sharedMaterials = originalMaterials;
+            Debug.LogWarning("Original mesh not found.");
+            return;
         }
 
-        decimateLevel = DEFAULT_DECIMATE_LEVEL;
-        MeshRevertManager.StoreDecimateLevel(originalMesh, decimateLevel);
+        float? previousDecimateLevel = MeshRevertManager.RevertDecimateLevel(originalMesh);
+        if (previousDecimateLevel.HasValue)
+        {
+            decimateLevel = previousDecimateLevel.Value;
+            MeshRevertManager.PushDecimateLevel(originalMesh, decimateLevel); 
+
+            ApplyDecimation();
+
+            Debug.Log($"Reverted to previous decimate level: {decimateLevel}");
+        }
+        else
+        {
+            if (decimateLevel == DEFAULT_DECIMATE_LEVEL)
+            {
+                EditorUtility.DisplayDialog("Revert Failed", "Not able to revert. Already at the default decimate level.", "OK");
+            }
+            else
+            {
+                EditorUtility.DisplayDialog("Revert Failed", "Nothing to revert.", "OK");
+            }
+            Debug.LogWarning("Revert failed: No previous decimate level available.");
+        }
 
         meshPreviewer.UpdatePreviewMesh(selectedGameObject);
-
-        isFirstDecimation = true;
     }
 
     private void RevertToOriginalMesh()
@@ -188,7 +238,7 @@ public class DecimaterMain : EditorWindow
             Debug.Log("Reverted to original mesh.");
 
             decimateLevel = DEFAULT_DECIMATE_LEVEL;
-            MeshRevertManager.StoreDecimateLevel(originalMeshFromManager, decimateLevel);
+            MeshRevertManager.PushDecimateLevel(originalMeshFromManager, decimateLevel);
             meshInfoDisplay.SetOriginalMesh(originalMeshFromManager);
         }
         else
@@ -196,7 +246,7 @@ public class DecimaterMain : EditorWindow
             Debug.LogWarning("Original mesh not found.");
 
             decimateLevel = DEFAULT_DECIMATE_LEVEL;
-            MeshRevertManager.StoreDecimateLevel(currentMesh, decimateLevel);
+            MeshRevertManager.PushDecimateLevel(currentMesh, decimateLevel);
             meshInfoDisplay.SetOriginalMesh(currentMesh);
         }
 
@@ -219,18 +269,34 @@ public class DecimaterMain : EditorWindow
 
         if (newSelectedGameObject != null)
         {
-            MeshFilter meshFilter = newSelectedGameObject.GetComponent<MeshFilter>();
-            SkinnedMeshRenderer skinnedMeshRenderer = newSelectedGameObject.GetComponent<SkinnedMeshRenderer>();
-
-            if (meshFilter != null)
+            Mesh original = GetOriginalMesh(newSelectedGameObject);
+            if (original != null)
             {
                 selectedGameObject = newSelectedGameObject;
-                originalMesh = meshFilter.sharedMesh;
+                originalMesh = original;
                 EnableReadWrite(originalMesh);
 
                 decimateLevel = MeshRevertManager.GetDecimateLevel(originalMesh);
 
-                decimatedMesh = Instantiate(originalMesh);
+                string actualMeshName = GetActualMeshName();
+                string originalPath = AssetDatabase.GetAssetPath(originalMesh);
+                string directory = Path.GetDirectoryName(originalPath);
+                string newFileName = $"{actualMeshName}{MESH_SUFFIX}.asset";
+                string newPath = $"{directory}/{newFileName}";
+
+                Mesh existingDecimatedMesh = AssetDatabase.LoadAssetAtPath<Mesh>(newPath);
+                if (existingDecimatedMesh != null)
+                {
+                    decimatedMesh = existingDecimatedMesh;
+                }
+                else
+                {
+                    decimatedMesh = new Mesh();
+                    decimatedMesh.name = $"{actualMeshName}{MESH_SUFFIX}";
+                    AssetDatabase.CreateAsset(decimatedMesh, newPath);
+                    AssetDatabase.SaveAssets();
+                }
+
                 meshInfoDisplay.SetOriginalMesh(originalMesh);
 
                 Renderer renderer = newSelectedGameObject.GetComponent<Renderer>();
@@ -245,29 +311,36 @@ public class DecimaterMain : EditorWindow
                 Debug.Log($"Selected Mesh: {AssetDatabase.GetAssetPath(originalMesh)}");
                 Repaint();
             }
-            else if (skinnedMeshRenderer != null)
-            {
-                selectedGameObject = newSelectedGameObject;
-                originalMesh = skinnedMeshRenderer.sharedMesh;
-                EnableReadWrite(originalMesh);
-
-                decimateLevel = MeshRevertManager.GetDecimateLevel(originalMesh);
-
-                decimatedMesh = Instantiate(originalMesh);
-                meshInfoDisplay.SetOriginalMesh(originalMesh);
-
-                originalMaterials = skinnedMeshRenderer.sharedMaterials;
-                originalSubmeshCount = new int[originalMesh.subMeshCount];
-                for (int i = 0; i < originalMesh.subMeshCount; i++)
-                {
-                    originalSubmeshCount[i] = originalMesh.GetTriangles(i).Length / 3;
-                }
-
-                Selection.activeObject = originalMesh;
-                Debug.Log($"Selected Mesh: {AssetDatabase.GetAssetPath(originalMesh)}");
-                Repaint();
-            }
         }
+    }
+
+    private Mesh GetOriginalMesh(GameObject gameObject)
+    {
+        MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
+        if (meshFilter != null && meshFilter.sharedMesh != null)
+        {
+            Mesh mesh = meshFilter.sharedMesh;
+            if (mesh.name.EndsWith(MESH_SUFFIX))
+            {
+                Mesh original = MeshRevertManager.GetOriginalMesh(mesh);
+                return original != null ? original : mesh;
+            }
+            return mesh;
+        }
+
+        SkinnedMeshRenderer skinnedMeshRenderer = gameObject.GetComponent<SkinnedMeshRenderer>();
+        if (skinnedMeshRenderer != null && skinnedMeshRenderer.sharedMesh != null)
+        {
+            Mesh mesh = skinnedMeshRenderer.sharedMesh;
+            if (mesh.name.EndsWith(MESH_SUFFIX))
+            {
+                Mesh original = MeshRevertManager.GetOriginalMesh(mesh);
+                return original != null ? original : mesh;
+            }
+            return mesh;
+        }
+
+        return null;
     }
 
     private void SaveDecimatedMesh()
@@ -277,7 +350,13 @@ public class DecimaterMain : EditorWindow
         string originalPath = AssetDatabase.GetAssetPath(originalMesh);
         string directory = Path.GetDirectoryName(originalPath);
         string newFileName = $"{actualMeshName}{MESH_SUFFIX}.asset";
-        string newPath = Path.Combine(directory, newFileName);
+
+        if (actualMeshName.EndsWith(MESH_SUFFIX))
+        {
+            newFileName = $"{RemoveDecimatedSuffix(actualMeshName)}{MESH_SUFFIX}.asset";
+        }
+
+        string newPath = $"{directory}/{newFileName}";
 
         Mesh existingMesh = AssetDatabase.LoadAssetAtPath<Mesh>(newPath);
         if (existingMesh != null)
@@ -288,6 +367,7 @@ public class DecimaterMain : EditorWindow
         }
         else
         {
+            decimatedMesh.name = $"{RemoveDecimatedSuffix(actualMeshName)}{MESH_SUFFIX}";
             AssetDatabase.CreateAsset(decimatedMesh, newPath);
             AssetDatabase.SaveAssets();
             Debug.Log($"Decimated mesh saved: {newPath}");
@@ -303,16 +383,40 @@ public class DecimaterMain : EditorWindow
         MeshFilter meshFilter = selectedGameObject.GetComponent<MeshFilter>();
         if (meshFilter != null && meshFilter.sharedMesh != null)
         {
-            return meshFilter.sharedMesh.name;
+            return RemoveCloneAndDecimatedSuffix(meshFilter.sharedMesh.name);
         }
 
         SkinnedMeshRenderer skinnedMeshRenderer = selectedGameObject.GetComponent<SkinnedMeshRenderer>();
         if (skinnedMeshRenderer != null && skinnedMeshRenderer.sharedMesh != null)
         {
-            return skinnedMeshRenderer.sharedMesh.name;
+            return RemoveCloneAndDecimatedSuffix(skinnedMeshRenderer.sharedMesh.name);
         }
 
         return "Unknown";
+    }
+
+    private string RemoveCloneAndDecimatedSuffix(string meshName)
+    {
+        // erase "(Clone)" 
+        if (meshName.EndsWith("(Clone)"))
+        {
+            meshName = meshName.Substring(0, meshName.Length - "(Clone)".Length);
+        }
+        // erase "_decimated" 
+        if (meshName.EndsWith(MESH_SUFFIX))
+        {
+            meshName = meshName.Substring(0, meshName.Length - MESH_SUFFIX.Length);
+        }
+        return meshName;
+    }
+
+    private string RemoveDecimatedSuffix(string meshName)
+    {
+        if (meshName.EndsWith(MESH_SUFFIX))
+        {
+            return meshName.Substring(0, meshName.Length - MESH_SUFFIX.Length);
+        }
+        return meshName;
     }
 
     private Mesh GetCurrentMesh()
@@ -339,8 +443,11 @@ public class DecimaterMain : EditorWindow
         ModelImporter modelImporter = AssetImporter.GetAtPath(path) as ModelImporter;
         if (modelImporter != null)
         {
-            modelImporter.isReadable = true;
-            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+            if (!modelImporter.isReadable)
+            {
+                modelImporter.isReadable = true;
+                AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+            }
         }
     }
 
