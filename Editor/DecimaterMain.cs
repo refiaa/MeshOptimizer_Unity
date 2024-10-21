@@ -80,12 +80,12 @@ public class DecimaterMain : EditorWindow
             ApplyDecimation();
         }
 
-        if (GUILayout.Button("Revert"))
+        if (GUILayout.Button("Undo"))
         {
             RevertDecimation();
         }
 
-        if (GUILayout.Button("Revert to Original"))
+        if (GUILayout.Button("Reset To Original Mesh"))
         {
             RevertToOriginalMesh();
         }
