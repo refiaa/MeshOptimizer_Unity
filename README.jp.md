@@ -38,8 +38,10 @@ Unityにインポートできるすべてのメッシュ形式（`.fbx`, `.glTF`
 
 ```sql
 Assets
-├─ *UnityMeshSimplifier* // Should be here !
 └─ MeshDecimater_Unity // MeshOptimizer_Unity directory name is `MeshDecimater_Unity`
+   │
+   ├─ UnityMeshSimplifier
+   │
    ├─  .gitignore
    │  LICENSE
    │  VERSION

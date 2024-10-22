@@ -38,8 +38,10 @@ tree have to looks like this
 
 ```sql
 Assets
-├─ *UnityMeshSimplifier* // Should be here !
 └─ MeshDecimater_Unity // MeshOptimizer_Unity directory name is `MeshDecimater_Unity`
+   │
+   ├─ UnityMeshSimplifier
+   │
    ├─  .gitignore
    │  LICENSE
    │  VERSION
