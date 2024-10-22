@@ -30,9 +30,7 @@ decimate functions are created by using **UnityMeshSimplifier**[[1]][UnityMeshSi
 
 **How to Install**
 
-1.  Download the file from [here][download_link] and extract it into your Assets folder.
-  
-2.  Next, download the latest release file (Unitypackage) from [here][download_link2] and import it to complete the setup.
+1.  Download the latest release file (Unitypackage) from [here][download_link2] and import it to complete the setup.
 
 **File Tree Structure**
 

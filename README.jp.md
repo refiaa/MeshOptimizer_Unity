@@ -29,10 +29,8 @@ Unityにインポートできるすべてのメッシュ形式（`.fbx`, `.glTF`
 ---
 
 **How to Install**
-
-1.  [ここ][download_link]のファイルをダウンロードし、Assetsに展開してください。
   
-2.  次に、[ここ][download_link2]から最新のリリースファイル(Unitypackage)をダウンロードしインポートしたら終わりです。
+1. [ここ][download_link2]から最新のリリースファイル(Unitypackage)をダウンロードしインポートしたら終わりです。
 
 **File Tree Structure**
 
