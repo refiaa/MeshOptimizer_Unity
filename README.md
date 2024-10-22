@@ -54,6 +54,10 @@ Assets
    │      MeshInfoDisplay.cs.meta
    │      MeshPreviewer.cs
    │      MeshPreviewer.cs.meta
+   │      MeshRevertManager.cs
+   │      MeshRevertManager.cs.meta
+   │      UpdateNotifier.cs
+   │      UpdateNotifier.cs.meta
    │      WireframeDrawer.cs
    │      WireframeDrawer.cs.meta
    │
@@ -152,6 +156,12 @@ v0.0.9.2:
 > - Fix Revert Button to undo 
 >
 > - Change name of some GUI (`Revert` to `Undo`, `Revert to Original` to `Reset To Original Mesh`)
+
+v0.0.9.3:
+
+> - Add update notification function
+> 
+> - Minor Bug fixes
 
 ```
 work confirmed in

@@ -22,7 +22,9 @@ public class DecimaterMain : EditorWindow
 
     private float decimateLevel = DEFAULT_DECIMATE_LEVEL;
 
-    private bool isFirstDecimation = true;
+    // Removed the isFirstDecimation field
+
+    private string updateStatusMessage = string.Empty;
 
     [MenuItem("MeshOptimizer/Mesh Optimizer GUI")]
     public static void ShowWindow()
@@ -37,6 +39,8 @@ public class DecimaterMain : EditorWindow
 
         meshPreviewer = new MeshPreviewer(previewMaterial);
         meshInfoDisplay = new MeshInfoDisplay();
+
+        UpdateNotifier.CheckForUpdates();
     }
 
     private void OnSelectionChange()
@@ -46,6 +50,24 @@ public class DecimaterMain : EditorWindow
 
     private void OnGUI()
     {
+        updateStatusMessage = UpdateNotifier.GetUpdateStatus();
+        if (!string.IsNullOrEmpty(updateStatusMessage))
+        {
+            if (updateStatusMessage.StartsWith("Please update"))
+            {
+                GUIStyle redBoldStyle = new GUIStyle(EditorStyles.label);
+                redBoldStyle.fontStyle = FontStyle.Bold;
+                redBoldStyle.normal.textColor = Color.red;
+                GUILayout.Label(updateStatusMessage, redBoldStyle);
+            }
+            else
+            {
+                GUILayout.Label(updateStatusMessage);
+            }
+
+            GUILayout.Space(10);
+        }
+
         GUILayout.Label("Select a GameObject", EditorStyles.boldLabel);
 
         GameObject newSelectedGameObject = (GameObject)EditorGUILayout.ObjectField("GameObject", selectedGameObject, typeof(GameObject), true);
@@ -125,8 +147,6 @@ public class DecimaterMain : EditorWindow
         };
 
         meshPreviewer.UpdatePreviewMesh(selectedGameObject);
-
-        isFirstDecimation = false;
     }
 
     private void ApplyMeshToRenderer(bool isSkinnedMeshRenderer)
@@ -251,8 +271,6 @@ public class DecimaterMain : EditorWindow
         }
 
         meshPreviewer.UpdatePreviewMesh(selectedGameObject);
-
-        isFirstDecimation = true;
     }
 
     private void LoadShaders()
@@ -264,7 +282,7 @@ public class DecimaterMain : EditorWindow
     {
         if (newSelectedGameObject != selectedGameObject)
         {
-            isFirstDecimation = true;
+            // NOTHING HERE
         }
 
         if (newSelectedGameObject != null)
