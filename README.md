@@ -44,8 +44,7 @@ Assets
 └─ MeshDecimater_Unity // MeshOptimizer_Unity directory name is `MeshDecimater_Unity`
    ├─  .gitignore
    │  LICENSE
-   │  README.jp.md
-   │  README.md
+   │  VERSION
    │
    ├─Editor
    │      DecimaterMain.cs
