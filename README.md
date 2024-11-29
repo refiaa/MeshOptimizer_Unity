@@ -11,8 +11,6 @@
 
 ![IMG](./img/main.png)
 
-| **English** | [日本語](./README.jp.md) |
-
 This plugin enables a functionality similar to Blender's decimate feature within Unity.
 
 This plugin supports both `Mesh Filter` and `Skinned Mesh Renderer`. 
