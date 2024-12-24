@@ -26,7 +26,7 @@ public class DecimaterMain : EditorWindow
 
     private string updateStatusMessage = string.Empty;
 
-    [MenuItem("MeshOptimizer/Mesh Optimizer GUI")]
+    [MenuItem("Refiaa/Mesh Optimizer GUI")]
     public static void ShowWindow()
     {
         GetWindow<DecimaterMain>("Mesh Optimizer GUI");
