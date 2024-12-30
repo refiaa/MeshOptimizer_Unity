@@ -159,6 +159,11 @@ v0.0.9.3:
 > - Add update notification function
 > 
 > - Minor Bug fixes
+>
+
+v0.1
+
+> Names are change for future updates
 
 ```
 work confirmed in
